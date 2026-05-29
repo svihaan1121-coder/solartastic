@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NeuroLearn - References</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #000000;
+        color: #ffffff;
+        font-family: sans-serif;
+        line-height: 1.6;
+      }
+
+      /* --- Content --- */
+      .main-content {
+        padding: 60px 20px;
+        padding-top: 150px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        border: 1px solid #ffffff;
+        padding: 60px;
+      }
+
+      h1 {
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 2.5em;
+        border-bottom: 2px solid #ffffff;
+        padding-bottom: 15px;
+        text-transform: uppercase;
+      }
+
+      .reference {
+        margin-bottom: 30px;
+        padding-left: 40px;
+        text-indent: -40px;
+        line-height: 1.8;
+        font-family: 'Georgia', 'Times New Roman', serif;
+      }
+
+      .reference a {
+        color: #ffffff;
+        text-decoration: underline;
+        word-wrap: break-word;
+      }
+
+      .reference a:hover {
+        background-color: #ffffff;
+        color: #000000;
+        text-decoration: none;
+      }
+
+      @media (max-width: 768px) {
+        /* Styling for the fetched nav when on mobile */
+        #nav-placeholder nav {
+          flex-direction: column;
+          gap: 15px;
+          padding: 20px;
+        }
+
+        .container {
+          padding: 30px 20px;
+        }
+
+        h1 {
+          font-size: 2em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="nav-placeholder"></div>
+
+    <div class="main-content">
+      <div class="container">
+        <h1>References</h1>
+
+        <div class="reference">
+          Daniel, B. (2025, November). The science of consciousness.
+          <em>MIT News | Massachusetts Institute of Technology</em>.
+          <a
+            href="https://news.mit.edu/2025/science-of-consciousness-1118"
+            target="_blank"
+            >https://news.mit.edu/2025/science-of-consciousness-1118</a
+          >
+        </div>
+
+        <div class="reference">
+          Li, C., Savier, E. L., Chen, H., & Cang, J. (2025). Visual Motion
+          Processing in The Tree Shrew Superior Colliculus.
+          <em>Journal of Neuroscience</em>, e1511252025–e1511252025.
+          <a
+            href="https://doi.org/10.1523/jneurosci.1511-25.2025"
+            target="_blank"
+            >https://doi.org/10.1523/jneurosci.1511-25.2025</a
+          >
+        </div>
+
+        <div class="reference">
+          Martina, M., & Costanza, P. (2025). Emotional and Social Dimension of
+          Abstract concepts meet with Interoception in Right Anterior Insula.
+          <em>Journal of Neuroscience</em>, e0238252025–e0238252025.
+          <a
+            href="https://doi.org/10.1523/jneurosci.0238-25.2025"
+            target="_blank"
+            >https://doi.org/10.1523/jneurosci.0238-25.2025</a
+          >
+        </div>
+
+        <div class="reference">
+          Michalowski, J. (2025, November). The cost of thinking.
+          <em>MIT News | Massachusetts Institute of Technology</em>.
+          <a
+            href="https://news.mit.edu/2025/cost-of-thinking-1119"
+            target="_blank"
+            >https://news.mit.edu/2025/cost-of-thinking-1119</a
+          >
+        </div>
+
+        <div class="reference">
+          Orenstein, D. (2025, November). MIT researchers invent new human brain
+          model to enable disease research, drug discovery.
+          <em>MIT News | Massachusetts Institute of Technology</em>.
+          <a
+            href="https://news.mit.edu/2025/researchers-invent-human-brain-model-to-enable-disease-research-drug-discovery-1105"
+            target="_blank"
+            >https://news.mit.edu/2025/researchers-invent-human-brain-model-to-enable-disease-research-drug-discovery-1105</a
+          >
+        </div>
+
+        <div class="reference">
+          Wang, M.-L., Hu, J., Wang, Y.-X., Lian, X.-T., Song, Y.-L., Wu, D.-Y.,
+          Du, J.-Y., Li, H., Xiong, X.-X., Li, Z.-M., Li, J.-T., Wang, Y.-S.,
+          Hu, J.-Y., Li, X.-W., Yang, J.-M., Sun, X.-D., Chen, Y.-H., & Gao,
+          T.-M. (2025). ATP release deficiency through astrocytic connexin 43 in
+          the dorsal hippocampus promotes depressive- and anxiety-like
+          behaviors. <em>The Journal of Neuroscience</em>, e1063252025.
+          <a
+            href="https://doi.org/10.1523/jneurosci.1063-25.2025"
+            target="_blank"
+            >https://doi.org/10.1523/jneurosci.1063-25.2025</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Function to fetch and inject nav.html
+      fetch('nav.html')
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
+        })
+        .then((data) => {
+          document.getElementById('nav-placeholder').innerHTML = data;
+        })
+        .catch((error) => {
+          console.error('There was a problem with the fetch operation:', error);
+        });
+    </script>
+  </body>
+</html>

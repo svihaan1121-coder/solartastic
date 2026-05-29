@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solartastic - 3D Model</title>
+    
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.61/build/spline-viewer.js"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* CORE SETUP */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Syncopate', sans-serif; }
+        body, html { 
+            background-color: #000; 
+            color: white; 
+            height: 100vh; 
+            width: 100vw;
+            overflow: hidden; 
+        }
+
+        /* 3D Model Container - Full Screen */
+        spline-viewer {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Back Button Styling */
+        .back-btn {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            background: transparent;
+            color: white;
+            border: 1.5px solid white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: 0.3s;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: black;
+        }
+
+        /* Footer Instruction Text */
+        .footer-instruction {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            pointer-events: none; /* Allows clicking through to the model */
+        }
+    </style>
+</head>
+<body>
+
+    <a href="activities.html" class="back-btn">&lt; BACK TO ACTIVITIES</a>
+
+    <div class="footer-instruction">
+        Interact with this solar system to visualize speed, distance, and shape.
+    </div>
+
+    <spline-viewer url="https://prod.spline.design/J7gsbIHcngNVedCl/scene.splinecode"></spline-viewer>
+
+</body>
+</html>
