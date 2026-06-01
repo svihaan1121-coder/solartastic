@@ -1,1 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solartastic</title>
+    
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.61/build/spline-viewer.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+
+    <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
+    <zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmm53hwox0025k1ttzfc6dtm7'></zapier-interfaces-chatbot-embed>
+
+    <style>
+        /* 1. CORE SETUP */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            height: 400vh;
+            background: #000;
+            color: white;
+            font-family: 'Syncopate', sans-serif;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .stars-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            background-image: 
+                radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent),
+                radial-gradient(1px 1px at 80% 70%, #fff, transparent);
+            background-size: 600px 600px;
+            pointer-events: none;
+        }
+
+        /* --- EXACT NAVIGATION CSS (REVERTED) --- */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            padding: 40px 60px; /* Reduced padding slightly to accommodate search bar */
+            z-index: 9999;
+            pointer-events: auto;
+            box-sizing: border-box;
+            
+        }
+
+        .logo { 
+            font-family: 'Syncopate', sans-serif;
+            font-weight: 800; 
+            letter-spacing: 4px; 
+            font-size: 25px; 
+            text-decoration: none; 
+            color: white; 
+        }
+
+        .nav-center {
+            display: flex;
+            align-items: center;
+            flex-grow: 1;
+            justify-content: center;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center; /* Aligns the tops of all nav items */
+        }
+
+        /* STANDARD LINKS */
+        .nav-links > a {
+            font-family: 'Syncopate', sans-serif;
+            margin-left: 30px; 
+            font-size: 15px; 
+            text-decoration: none; 
+            color: white;
+            padding: 10px 22px; 
+            border-radius: 50px; 
+            transition: 0.3s ease;
+            line-height: 1;
+            border: 1px solid transparent; /* Keeps sizing consistent with hover state */
+        }
+
+        .nav-links a.active { 
+            background: white; 
+            color: black; 
+        }
+
+        .nav-links a:hover:not(.active):not(.main-link):not(.sub-link) { 
+            border: 1px solid white; 
+            background: rgba(255,255,255,0.1); 
+        }
+
+        /* THE EXPANDING BOX (ACTIVITIES) */
+        .activities-dropdown {
+            margin-left: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 25px; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            
+            /* The Fix: Use max-height instead of height to let it align naturally */
+            max-height: 37px; 
+            overflow: hidden;
+            min-width: 160px;
+        }
+
+        .activities-dropdown:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid white;
+            max-height: 150px; /* Increased to fit sub-links */
+        }
+
+        /* Main Activities Link */
+        .activities-dropdown .main-link {
+            font-family: 'Syncopate', sans-serif;
+            padding: 10px 22px; /* Matches standard link padding exactly */
+            font-size: 15px;
+            text-decoration: none;
+            color: white;
+            width: 100%;
+            text-align: center;
+            line-height: 1; /* Matches standard link line-height */
+            display: block;
+        }
+
+        /* Sub-menu Games Link */
+        .activities-dropdown .sub-link {
+            font-family: 'Syncopate', sans-serif;
+            padding: 10px;
+            font-size: 12px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.6);
+            width: 100%;
+            text-align: center;
+            transition: color 0.3s, opacity 0.3s;
+            opacity: 0;
+        }
+
+        .activities-dropdown:hover .sub-link {
+            opacity: 1;
+            color: white;
+        }
+
+        /* --- SEARCH BAR CSS --- */
+        .search-wrapper {
+            position: relative;
+            margin-left: 30px;
+        }
+        
+        .search-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-family: sans-serif;
+            font-size: 12px;
+            width: 200px;
+            transition: all 0.3s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            width: 250px;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: white;
+        }
+
+        #search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.9);
+            border-radius: 10px;
+            margin-top: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+        
+        #search-results a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            font-size: 12px;
+            font-family: sans-serif;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        #search-results a:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        /* --- END SEARCH BAR CSS --- */
+
+        /* --- END NAVIGATION CSS --- */
+
+        /* 3. VISUALS - 3D PLANET CONTAINERS */
+        .planet-view {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 5;
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .planet-container {
+            position: absolute;
+            width: 100%; height: 100%;
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+        
+        spline-viewer { 
+            pointer-events: auto; 
+            width: 100%; 
+            height: 100%; 
+            background: #000 
+        }
+
+        .earth-3d { z-index: 6; transform: scale(1.6); } 
+        .mars-3d { z-index: 6; right: -100%; opacity: 0; }
+
+        /* 4. ANIMATION STATES */
+        body.stage-1 .earth-3d { transform: translateX(5vw) scale(1.9); }
+        body.stage-2 .earth-3d { transform: scale(1.6) translateY(2%); }
+        body.stage-3 .earth-3d { transform: translateX(-35vw) scale(1.1); }
+        body.stage-3 .mars-3d { right: 0; opacity: 1; transform: translateX(35vw) scale(0.5); }
+
+        /* 5. CONTENT LAYERS */
+        .content-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            pointer-events: none;
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 0 10%;
+            opacity: 0;
+            transition: opacity 0.6s ease, transform 0.8s ease;
+            z-index: 10;
+        }
+
+        .hero-layer { opacity: 1; pointer-events: auto; }
+        body.stage-1 .hero-layer, body.stage-2 .hero-layer, body.stage-3 .hero-layer { opacity: 0; transform: translateY(-30px); pointer-events: none; }
+
+        .earth-detail-layer { flex-direction: row; align-items: center; justify-content: space-between; }
+        body.stage-1 .earth-detail-layer { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        body.stage-2 .earth-detail-layer, body.stage-3 .earth-detail-layer { opacity: 0; transform: translateY(-30px); }
+
+        .typewriter::after { content: '|'; animation: blink 0.7s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        body.stage-2 .details-layer { opacity: 1; pointer-events: auto; }
+        body.stage-3 .details-layer { opacity: 0; transform: translateY(-30px); pointer-events: none; }
+
+        .info-box {
+            max-width: 400px;
+            padding: 30px;
+            border-left: 1px solid rgba(255,255,255,0.2);
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+            position: relative;
+            transform: translateY(100px);
+        }
+        .info-box.right {
+            max-width: 380px;
+            border-left: none;
+            border-right: 1px solid rgba(255,255,255,0.2);
+            background: linear-gradient(-90deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+            text-align: right;
+            transform: translateY(-100px);
+        }
+
+        .info-box h2 { 
+            font-size: 32px; 
+            margin-bottom: 15px; 
+            line-height: 1.1; 
+            letter-spacing: -1px;
+            font-weight: 900;
+        }
+        .info-box p { 
+            font-family: sans-serif; 
+            opacity: 0.5; 
+            font-size: 13px; 
+            line-height: 1.8; 
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .index-num {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 4px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        body.stage-3 .auth-layer { 
+            opacity: 1; 
+            pointer-events: auto; 
+            align-items: center;
+            padding: 0;
+            padding-bottom: 100px; 
+        }
+
+        .auth-card { 
+            width: 450px; text-align: center; 
+            background: rgba(255, 255, 255, 0.04); 
+            padding: 50px 40px; border-radius: 40px; 
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+        }
+
+        .stats-grid {
+            display: flex; justify-content: space-between;
+            width: 100%; max-width: 800px; margin-top: 60px;
+            transform: translateY(50px);
+        }
+        .stat-number { display: block; font-size: 24px; margin-bottom: 8px; font-weight: bold; color: #fff; }
+        .stat-label { font-family: sans-serif; font-size: 11px; opacity: 0.5; text-transform: uppercase; letter-spacing: 2px; }
+
+        .hero-btn {
+            margin-top: 40px; background: transparent; color: white; border: 1.5px solid white;
+            padding: 16px 48px; border-radius: 50px; font-size: 12px; cursor: pointer;
+            transition: 0.3s; text-decoration: none; display: inline-block;
+            width: fit-content; pointer-events: auto;
+        }
+        .hero-btn:hover { background: white; color: black; }
+
+        .signup-link {
+            display: inline-block; margin-top: 25px; color: #fff; font-weight: 800;
+            text-decoration: none; border-bottom: 2px solid white; padding-bottom: 5px;
+        }
+
+        #footer-placeholder { position: absolute; top: 400vh; width: 100%; z-index: 100; transform: translateY(-100%); }
+
+        .live-tracker {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            padding: 30px; border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center; font-size: 10px; letter-spacing: 2px;
+            z-index: 1000; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .hide-tracker {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+        }
+
+        /* --- MOBILE MEDIA QUERY (Added to preserve CSS) --- */
+        .hamburger { display: none; }
+
+        @media (max-width: 768px) {
+            nav { padding: 20px; }
+            .logo { font-size: 18px; letter-spacing: 2px; }
+            
+            .hamburger {
+                display: flex;
+                flex-direction: column;
+                cursor: pointer;
+                z-index: 10000;
+            }
+            .hamburger span {
+                height: 2px;
+                width: 25px;
+                background: white;
+                margin: 2px 0;
+                transition: 0.4s;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: rgba(0,0,0,0.95);
+                padding: 20px;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                align-items: center;
+            }
+
+            .nav-links.active { display: flex; }
+            .nav-links > a, .activities-dropdown, .search-wrapper { margin: 10px 0; }
+            
+            /* Make Activities dropdown click-based on mobile */
+            .activities-dropdown { max-height: none; min-width: auto; }
+            .activities-dropdown .sub-link { opacity: 1; color: white; font-size: 12px; margin-top: 5px; }
+
+            .content-layer { padding: 0 5%; }
+            .earth-detail-layer, .details-layer { 
+                flex-direction: column; 
+                justify-content: center;
+                gap: 20px;
+            }
+            .info-box, .info-box.right {
+                transform: translateY(0);
+                text-align: center;
+                border: 1px solid rgba(255,255,255,0.1);
+                background: rgba(0,0,0,0.5);
+                max-width: 90%;
+                margin: 0 auto;
+                border-left: 1px solid rgba(255,255,255,0.2);
+            }
+            .auth-card { width: 90%; padding: 30px 20px; }
+            .stats-grid { flex-wrap: wrap; gap: 20px; justify-content: center; }
+            .stat-item { flex: 0 0 40%; text-align: center; }
+            .earth-3d { transform: scale(1.2); }
+            body.stage-1 .earth-3d { transform: scale(1.3) translateY(10vh); }
+        }
+
+        #km-val, #mi-val {
+    font-size: 14px;       /* Makes the numbers larger */
+    font-weight: bold;      /* Makes them stand out */
+    color: #fff;
+                /* Bright white for contrast */
+    
+}
+    </style>
+</head>
+<body>
+
+    <div class="stars-bg"></div>
+    
+    <nav>
+        <a href="index.html" class="logo">SOLARTASTIC</a>
+        
+        <div class="nav-center">
+            <div class="nav-links" id="nav-links">
+                <a href="sessions.html">LIVE SESSIONS</a>
+                
+                <div class="activities-dropdown">
+                    <a href="activities.html" class="main-link">ACTIVITIES</a>
+                    <a href="game.html" class="sub-link">GAMES</a>
+                </div>
+
+                <a href="sign.html" class="active" id="auth-link">SIGN IN</a>
+            </div>
+            
+            <div class="search-wrapper">
+                <input type="text" id="search-input" class="search-input" placeholder="Search...">
+                <div id="search-results"></div>
+            </div>
+        </div>
+
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </nav>
+    
+    <div class="planet-view">
+        <div class="planet-container earth-3d">
+            <spline-viewer loading="eager" url="https://prod.spline.design/7qPodWu2vRoH5RwW/scene.splinecode"></spline-viewer>
+        </div>
+        <div class="planet-container mars-3d">
+            <spline-viewer loading="eager" url="https://prod.spline.design/F09da9nTIgDEbgiX/scene.splinecode"></spline-viewer>
+        </div>
+    </div>
+
+    <div class="content-layer hero-layer">
+        <h1 style="font-size: clamp(40px, 7vw, 80px); letter-spacing: -2px;">OUR SOLAR SYSTEM</h1>
+        <p style="font-family: sans-serif; opacity: 0.5; max-width: 400px; line-height: 1.8; margin-top: 15px; letter-spacing: 2px;">
+            LEARN ABOUT THE MYSTERIES OF OUR SOLAR SYSTEM
+        </p>
+        <a href="activities.html" class="hero-btn">START LEARNING</a>
+    </div>
+
+    <div class="content-layer earth-detail-layer">
+        <div class="info-box" style="align-self: flex-start; margin-top: 10vh;">
+            <h1 style="font-size: clamp(30px, 5vw, 60px); font-weight: 900; letter-spacing: 10px; margin-bottom: 20px;">ABOUT US</h1>
+            <span class="index-num">Introduction // 00</span>
+            <p>At Solartastic, we aim to help people of any age to understand our vast solar system. From Mercury all the way to Neptune, you will learn about everything!</p>
+        </div>
+
+        <div class="info-box right" style="align-self: flex-end; margin-bottom: 10vh;">
+            <span class="index-num">Facts Like These // 00</span>
+            <h2 style="font-size: 24px;">COME TO LIFE</h2>
+            <p id="earth-stats" class="typewriter" style="min-height: 80px;"></p>
+            <a href="activities.html" class="hero-btn" style="margin-top: 25px;">Learn More</a>
+        </div>
+    </div>
+
+    <div class="content-layer details-layer" style="flex-direction: row; justify-content: space-between; align-items: center;">
+        <div class="info-box">
+            <span class="index-num">Why us? // 01 </span>
+            <h2>PACE<br><span style="opacity:0.4;">YOURSELF</span></h2>
+            <p>Bite-sized modules designed for any learner. No deadlines.</p>
+        </div>
+        <div class="info-box right">
+            <span class="index-num">Why us? // 02</span>
+            <h2>STAY<br><span style="opacity:0.4;">IMMERSED</span></h2>
+            <p>Interactive 3D environments that bring the solar system to life.</p>
+        </div>
+    </div>
+
+    <div class="content-layer auth-layer">
+        <div class="auth-card">
+            <h2 style="font-size: 24px; margin-bottom: 15px;">JOIN NOW!</h2>
+            <p style="font-family: sans-serif; opacity: 0.6; font-size: 13px; line-height: 1.6; letter-spacing: 1px;">
+                Create an account to save your progress across the stars.
+            </p>
+            <a href="alreadySign.html" class="signup-link">CREATE ACCOUNT</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-item">
+                <span class="stat-number">5M+</span>
+                <span class="stat-label">Explorers</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">100+</span>
+                <span class="stat-label">Educators</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">NASA</span>
+                <span class="stat-label">Data Sourced</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <div class="live-tracker">
+        <span style="opacity: 1 ; color: #60d1e0; font-size: 12px; font-family: 'Syncopate', sans-serif;">DISTANCE TRAVELED BY SOLAR SYSTEM EVER SINCE YOU ENTERED THIS PAGE:</span> 
+        <span id="km-val">0</span> KM / <span id="mi-val">0</span> MILES
+    </div>
+
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCl8wecK3hMID2yamyKfI2sDXE6LjMkDm4",
+        authDomain: "neurolearn-dbf7b.firebaseapp.com",
+        projectId: "neurolearn-dbf7b",
+        storageBucket: "neurolearn-dbf7b.appspot.com",
+        messagingSenderId: "746504792706",
+        appId: "1:746504792706:web:0ffe714b05fc0bbf37a29b"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        // --- MOBILE MENU LOGIC ---
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // --- SEARCH LOGIC ---
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
+        
+        // Define searchable items (navigation links)
+        const searchableItems = [
+            { title: "Home", url: "index.html", keywords: "home main landing" },
+            { title: "Live Sessions", url: "sessions.html", keywords: "live classes video" },
+            { title: "Earth", url: "Activities/P3.html", keywords: "Earth" },
+            { title: "Venus", url: "Activities/P2.html", keywords: "Venus" },
+            { title: "Mercury", url: "Activities/P1.html", keywords: "Mercury" },
+            { title: "Games", url: "game.html", keywords: "play fun interactive" },
+            { title: "Sign In", url: "sign.html", keywords: "login account" }
+        ];
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            searchResults.innerHTML = '';
+            
+            if (query.length < 2) return;
+
+            const filtered = searchableItems.filter(item => 
+                item.title.toLowerCase().includes(query) || 
+                item.keywords.toLowerCase().includes(query)
+            );
+
+            filtered.forEach(item => {
+                const a = document.createElement('a');
+                a.href = item.url;
+                a.textContent = item.title;
+                searchResults.appendChild(a);
+            });
+        });
+
+        // Close search results when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-wrapper')) {
+                searchResults.innerHTML = '';
+            }
+        });
+
+        // --- DYNAMIC AUTH UI LOGIC ---
+        const authLink = document.getElementById('auth-link');
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                authLink.textContent = "SIGN OUT";
+                authLink.classList.add('active'); 
+                authLink.removeAttribute('href');
+                authLink.onclick = async (event) => {
+                    event.preventDefault();
+                    await signOut(auth);
+                    window.location.href = "index.html";
+                };
+            } else {
+                authLink.textContent = "SIGN IN";
+                authLink.href = "sign.html";
+                authLink.onclick = null;
+            }
+        });
+
+        // --- TYPEWRITER & SCROLL LOGIC ---
+        const statsText = "DIAMETER: 12,742 KM // ORBIT: 365.25 DAYS // POPULATION: 8 BILLION+ // STATUS: HABITABLE";
+        let isTyping = false;
+
+        function typeWriter(elementId, text, speed) {
+            let i = 0;
+            const element = document.getElementById(elementId);
+            if(!element) return;
+            element.innerHTML = "";
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            type();
+        }
+
+        window.addEventListener('scroll', () => {
+            const scroll = window.scrollY;
+            const body = document.body;
+            const tracker = document.querySelector('.live-tracker');
+
+            body.classList.remove('stage-1', 'stage-2', 'stage-3');
+
+            if (scroll >= 200 && scroll < 1000) {
+                body.classList.add('stage-1');
+                if (!isTyping) {
+                    isTyping = true;
+                    typeWriter("earth-stats", statsText, 50);
+                }
+            } else if (scroll >= 1000 && scroll < 2000) {
+                body.classList.add('stage-2');
+                isTyping = false; 
+            } else if (scroll >= 2000) {
+                body.classList.add('stage-3');
+                isTyping = false;
+            }
+
+            // Tracker visibility
+            const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
+            if (tracker && scroll > scrollableHeight - 300) {
+                tracker.classList.add('hide-tracker');
+            } else if (tracker) {
+                tracker.classList.remove('hide-tracker');
+            }
+        });
+
+        // --- COUNTER LOGIC ---
+        let km = 0; 
+        let mi = 0; 
+        
+        setInterval(() => {
+            km += 230000; mi += 143000;
+            const kmEl = document.getElementById('km-val');
+            const miEl = document.getElementById('mi-val');
+            if(kmEl) kmEl.textContent = km.toLocaleString();
+            if(miEl) miEl.textContent = mi.toLocaleString();
+        }, 1000);
+
+        // --- FOOTER FETCH ---
+        fetch('footer.html').then(res => {
+            if(res.ok) return res.text();
+        }).then(data => {
+            if(data) document.getElementById('footer-placeholder').innerHTML = data;
+        });
+    });
+</script>
+</body>
 </html>

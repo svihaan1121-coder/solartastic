@@ -1,1 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Solartastic - Mission Control</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Share+Tech+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #000;
+      color: white;
+      font-family: 'Syncopate', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+    }
+    #nav-placeholder {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 80px;
+      z-index: 100;
+      background: #000;
+    }
+    .game-page-wrapper {
+      display: flex;
+      height: calc(100vh - 80px);
+      width: 100vw;
+      margin-top: 80px;
+      position: relative;
+    }
+    .back-button {
+      position: absolute;
+      top: 0px;
+      left: 20px;
+      padding: 12px 24px;
+      transform : translateY(-40px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50px;
+      color: white;
+      text-decoration: none;
+      font-family: 'Syncopate', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      text-transform: uppercase;
+    }
+    .back-button:hover {
+      background: white;
+      color: black;
+      border-color: white;
+    }
+    .tiles-sidebar {
+      width: 350px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+      padding-left: 5vw;
+      padding-top: 80px;
+      z-index: 10;
+    }
+    .game-tile {
+      width: 280px;
+      padding: 25px;
+      border-left: 2px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.02);
+      cursor: pointer;
+      transition: 0.4s ease;
+    }
+    .game-tile:hover,
+    .game-tile.active {
+      border-left: 2px solid #fff;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateX(10px);
+    }
+    .game-tile h2 {
+      font-size: 14px;
+      letter-spacing: 2px;
+      opacity: 0.5;
+    }
+    .game-tile:hover h2,
+    .game-tile.active h2 {
+      opacity: 1;
+    }
+    .display-panel {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .display-panel.active {
+      opacity: 1;
+    }
+    .slideshow-bg {
+      position: relative;
+      width: 90%;
+      max-width: 750px;
+      aspect-ratio: 16 / 9;
+      border: 2px solid #333;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #050505;
+      margin-bottom: 30px;
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      opacity: 0;
+      transition: opacity 0.8s;
+    }
+    .slide.active {
+      opacity: 1;
+    }
+    .content-overlay {
+      width: 90%;
+      max-width: 750px;
+      text-align: left;
+    }
+    .content-overlay h1 {
+      font-size: 32px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .content-overlay p {
+      font-family: sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      opacity: 0.6;
+      margin-bottom: 25px;
+    }
+    .play-btn {
+      padding: 15px 40px;
+      background: #fff;
+      color: #000;
+      border: none;
+      font-family: 'Syncopate', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    #gameModal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: #000;
+      border: 1px solid #fff;
+      width: 90%;
+      max-width: 900px;
+      height: 85vh;
+      padding: 40px;
+      position: relative;
+      overflow-y: auto;
+      text-align: center;
+    }
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      letter-spacing: 2px;
+      z-index: 10;
+    }
+    .modal-content.game-active > .close-btn {
+      display: none;
+    }
+    .crossword-container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+    .crossword-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 50px);
+      grid-template-rows: repeat(5, 50px);
+      gap: 2px;
+    }
+    .crossword-cell {
+      width: 50px;
+      height: 50px;
+      background: #fff;
+      border: 1px solid #000;
+      color: #000;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    .black-cell {
+      background: #000;
+      border: none;
+    }
+    .clues {
+      text-align: left;
+      font-family: sans-serif;
+      font-size: 14px;
+      max-width: 250px;
+    }
+    .jeopardy-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .j-header {
+      background: #000033;
+      padding: 10px;
+      font-size: 10px;
+      border: 1px solid #fff;
+    }
+    .j-card {
+      background: #000088;
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 1px solid #fff;
+      font-size: 14px;
+      font-weight: bold;
+      color: #ffcc00;
+    }
+    .j-card:hover {
+      background: #0000ff;
+    }
+    #galactic-root {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    @keyframes gd-pulse {
+      0%,100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    @keyframes gd-ping {
+      75%,100% { transform: scale(2); opacity: 0; }
+    }
+    @keyframes gd-float {
+      0%,100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes gd-bouncein {
+      0% { transform: scale(0) rotate(-6deg); }
+      60% { transform: scale(1.2) rotate(-6deg); }
+      100% { transform: scale(1) rotate(-6deg); }
+    }
+    @keyframes gd-crit {
+      0%,100% { opacity: 1; transform: scale(1) rotate(3deg); }
+      50% { opacity: 0.7; transform: scale(1.05) rotate(3deg); }
+    }
+    @keyframes gd-shake {
+      0%,100% { transform: translateX(0); }
+      10%,30%,50%,70%,90% { transform: translateX(-6px); }
+      20%,40%,60%,80% { transform: translateX(6px); }
+    }
+    .gd-pulse { animation: gd-pulse 2s ease-in-out infinite; }
+    .gd-ping { animation: gd-ping 1s cubic-bezier(0,0,0.2,1) infinite; }
+    .gd-float { animation: gd-float 3s ease-in-out infinite; }
+    .gd-bouncein { animation: gd-bouncein 0.4s ease-out forwards; }
+    .gd-crit { animation: gd-crit 0.6s ease-in-out infinite; }
+    .gd-shake { animation: gd-shake 0.5s ease-in-out; }
+    .gd-mlabel { opacity: 0; transition: opacity 0.3s; }
+    .gd-mwrap:hover .gd-mlabel { opacity: 1; }
+    .modal-content.game-active { padding: 0; overflow: hidden; }
+    #starfield {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: #000000;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+  <div id="nav-placeholder"></div>
+  <div class="game-page-wrapper">
+    <a href="activities.html" class="back-button">&larr; EXIT TO MISSIONS</a>
+    <div class="tiles-sidebar">
+      <div class="game-tile" onmouseover="showGame(0)">
+        <h2>SPACE MISSION</h2>
+      </div>
+      <div class="game-tile" onmouseover="showGame(1)">
+        <h2>SPACE PUZZLE</h2>
+      </div>
+      <div class="game-tile" onmouseover="showGame(2)">
+        <h2>SPACE JEOPARDY</h2>
+      </div>
+    </div>
+    <div class="display-panel" id="mainDisplay">
+      <div class="slideshow-bg" id="slideshow"></div>
+      <div class="content-overlay">
+        <h1 id="displayTitle"></h1>
+        <p id="displayDesc"></p>
+        <button class="play-btn" onclick="openGame()">PLAY MISSION</button>
+      </div>
+    </div>
+  </div>
+  <div id="gameModal">
+    <div class="modal-content" id="modalContent">
+      <span class="close-btn" onclick="closeGame()">[ CLOSE ]</span>
+      <div id="gameContainer" style="width: 100%; height: 100%; position: relative"></div>
+    </div>
+  </div>
+
+    <script type="text/babel" id="galactic-script">
+      const { useState, useEffect, useMemo, useRef } = React;
+      const mono = "'Share Tech Mono', monospace";
+      const gdist = (a, b) =>
+        Math.sqrt((a.left - b.left) ** 2 + (a.top - b.top) ** 2);
+
+      const BlackHoleMonster = ({ diskColor = '#a855f7', size = 54 }) => {
+        const canvasRef = useRef(null);
+        const rafRef = useRef(null);
+        useEffect(() => {
+          const canvas = canvasRef.current;
+          if (!canvas) return;
+          const ctx = canvas.getContext('2d');
+          const W = size, H = size;
+          const cx = W / 2, cy = H / 2;
+          let startTs = null;
+          const draw = (ts) => {
+            if (!startTs) startTs = ts;
+            const elapsed = ts - startTs;
+            ctx.clearRect(0, 0, W, H);
+            const pulse = 1 + 0.07 * Math.sin(elapsed * 0.002);
+            const diskOuter = W * 0.46 * pulse;
+            const diskInner = W * 0.27 * pulse;
+            const diskGrad = ctx.createRadialGradient(cx, cy, diskInner, cx, cy, diskOuter);
+            diskGrad.addColorStop(0, diskColor + 'cc');
+            diskGrad.addColorStop(0.35, diskColor + '88');
+            diskGrad.addColorStop(0.7, diskColor + '33');
+            diskGrad.addColorStop(1, diskColor + '00');
+            ctx.beginPath();
+            ctx.arc(cx, cy, diskOuter, 0, Math.PI * 2);
+            ctx.fillStyle = diskGrad;
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(cx, cy, diskOuter * 0.88, 0, Math.PI * 2);
+            ctx.strokeStyle = diskColor + '44';
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            const ringAlpha = Math.round((0.55 + 0.2 * Math.sin(elapsed * 0.003)) * 255).toString(16).padStart(2, '0');
+            ctx.beginPath();
+            ctx.arc(cx, cy, W * 0.25 * pulse, 0, Math.PI * 2);
+            ctx.strokeStyle = diskColor + ringAlpha;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, W * 0.22 * pulse);
+            cg.addColorStop(0, 'rgba(0,0,0,1)');
+            cg.addColorStop(0.4, 'rgba(0,0,20,0.95)');
+            cg.addColorStop(0.7, 'rgba(20,0,40,0.6)');
+            cg.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.beginPath();
+            ctx.arc(cx, cy, W * 0.22 * pulse, 0, Math.PI * 2);
+            ctx.fillStyle = cg;
+            ctx.fill();
+            rafRef.current = requestAnimationFrame(draw);
+          };
+          rafRef.current = requestAnimationFrame(draw);
+          return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
+        }, [size, diskColor]);
+        return (
+          <canvas ref={canvasRef} width={size} height={size} style={{ display: 'block', borderRadius: '50%' }} />
+        );
+      };
+
+      const SwordIcon = ({ s = 18, c = 'white' }) => (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+          <line x1="13" y1="19" x2="19" y2="13" />
+          <line x1="16" y1="16" x2="20" y2="20" />
+          <line x1="19" y1="21" x2="21" y2="19" />
+        </svg>
+      );
+      const CrosshairIcon = ({ s = 18, c = 'white' }) => (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="22" y1="12" x2="18" y2="12" />
+          <line x1="6" y1="12" x2="2" y2="12" />
+          <line x1="12" y1="6" x2="12" y2="2" />
+          <line x1="12" y1="22" x2="12" y2="18" />
+        </svg>
+      );
+      const ZapIcon = ({ s = 28, c = '#c084fc' }) => (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+        </svg>
+      );
+      const RocketIcon = ({ s = 22, c = 'white', r = 0 }) => (
+        <svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: `rotate(${r}deg)` }}>
+          <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z" />
+          <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z" />
+          <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0" />
+          <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5" />
+        </svg>
+      );
+
+      const GalacticDefense = ({ onClose }) => {
+        const [phase, setPhase] = useState('exploration');
+        const [pHp, setPHp] = useState(100);
+        const [monster, setMonster] = useState(null);
+        const [mHp, setMHp] = useState(100);
+        const [question, setQuestion] = useState(null);
+        const [showQ, setShowQ] = useState(false);
+        const [msg, setMsg] = useState('Click anywhere to navigate your ship!');
+        const [defeated, setDefeated] = useState([]);
+        const [monsters, setMonsters] = useState([]);
+        const [fumble, setFumble] = useState(false);
+        const [attack, setAttack] = useState(false);
+        const [dmg, setDmg] = useState(0);
+        const [pos, setPos] = useState({ top: 85, left: 50 });
+        const [sucking, setSucking] = useState(false);
+        const [pDmgShow, setPDmgShow] = useState(false);
+        const [pDmg, setPDmg] = useState(0);
+
+        const stars = useMemo(() => {
+          const mk = (n) => Array.from({ length: n }, () => ({
+            top: Math.random() * 100, left: Math.random() * 100,
+            op: Math.random() * 0.8 + 0.2, dur: Math.random() * 3 + 2,
+          }));
+          return { s: mk(120), m: mk(40), l: mk(15) };
+        }, []);
+
+        useEffect(() => { spawnMonsters(); }, []);
+
+        useEffect(() => {
+          if (phase !== 'exploration' || sucking || monsters.length === 0) return;
+          for (const m of monsters) {
+            if (defeated.includes(m.id)) continue;
+            if (gdist(pos, m.pos) <= 14) { suck(m); break; }
+          }
+        }, [pos, monsters, defeated, phase, sucking]);
+
+        const spawnMonsters = () => {
+          const base = [
+            { id: 1, name: 'Void Crawler', diskColor: '#4ade80' },
+            { id: 2, name: 'Nebula Phantom', diskColor: '#a855f7' },
+            { id: 3, name: 'Solar Flare', diskColor: '#f97316' },
+            { id: 4, name: 'Black Hole Entity', diskColor: '#60a5fa' },
+            { id: 5, name: 'Cosmic Horror', diskColor: '#f43f5e' },
+          ];
+          const placed = [];
+          for (const m of base) {
+            let p, ok = false, tries = 0;
+            while (!ok && tries < 60) {
+              const left = Math.random() > 0.5 ? Math.random() * 22 + 5 : Math.random() * 22 + 68;
+              p = { top: Math.random() * 55 + 10, left };
+              ok = placed.every((x) => gdist(p, x.pos) >= 18);
+              tries++;
+            }
+            placed.push({ ...m, pos: p });
+          }
+          setMonsters(placed);
+        };
+
+        const suck = (m) => {
+          setSucking(true);
+          setMonster(m);
+          setMsg(`GRAVITY WELL! Pulling into ${m.name}...`);
+          setPos(m.pos);
+          setTimeout(() => {
+            setMHp(100);
+            setPhase('battle');
+            setMsg(`Engaging ${m.name}!`);
+            setSucking(false);
+          }, 2800);
+        };
+
+        const mapClick = (e) => {
+          if (sucking) return;
+          if (e.target.closest('.gd-mwrap')) return;
+          const r = e.currentTarget.getBoundingClientRect();
+          setPos({
+            left: Math.max(4, Math.min(96, ((e.clientX - r.left) / r.width) * 100)),
+            top: Math.max(4, Math.min(96, ((e.clientY - r.top) / r.height) * 100)),
+          });
+          setMsg('');
+        };
+
+        const questions = [
+          { q: 'Which planet is known as the Red Planet?', a: 'Mars', opts: ['Venus', 'Mars', 'Jupiter', 'Saturn'] },
+          { q: 'How many planets are in our solar system?', a: '8', opts: ['7', '8', '9', '10'] },
+          { q: 'What is the closest star to Earth?', a: 'The Sun', opts: ['Proxima Centauri', 'Sirius', 'The Sun', 'Betelgeuse'] },
+          { q: 'What galaxy do we live in?', a: 'Milky Way', opts: ['Andromeda', 'Milky Way', 'Triangulum', 'Whirlpool'] },
+          { q: 'What is the largest planet in our solar system?', a: 'Jupiter', opts: ['Saturn', 'Neptune', 'Jupiter', 'Uranus'] },
+          { q: 'What do we call a rock that burns up in the sky?', a: 'Meteor', opts: ['Comet', 'Asteroid', 'Meteor', 'Satellite'] },
+          { q: 'How long does sunlight take to reach Earth?', a: '8 minutes', opts: ['8 seconds', '8 minutes', '8 hours', '8 days'] },
+          { q: 'Which planet has the most visible rings?', a: 'Saturn', opts: ['Jupiter', 'Uranus', 'Neptune', 'Saturn'] },
+          { q: 'A pattern of stars in the sky is called a…', a: 'Constellation', opts: ['Nebula', 'Galaxy', 'Constellation', 'Cluster'] },
+          { q: 'What force keeps planets orbiting the Sun?', a: 'Gravity', opts: ['Magnetism', 'Friction', 'Gravity', 'Radiation'] },
+          { q: 'Which planet spins on its side?', a: 'Uranus', opts: ['Neptune', 'Saturn', 'Mars', 'Uranus'] },
+          { q: "NASA's most famous space telescope?", a: 'Hubble', opts: ['Kepler', 'Hubble', 'Webb', 'Spitzer'] },
+        ];
+
+        const doAttack = () => {
+          const q = questions[Math.floor(Math.random() * questions.length)];
+          setQuestion(q);
+          setShowQ(true);
+          setMsg('Calculating firing solution...');
+        };
+
+        const answer = (ans) => {
+          const correct = ans === question.a;
+          let newMHp = mHp, newPHp = pHp;
+          if (correct) {
+            const d = Math.floor(Math.random() * 11) + 25;
+            newMHp = Math.max(0, mHp - d);
+            setMHp(newMHp);
+            setDmg(d);
+            setAttack(true);
+            setTimeout(() => setAttack(false), 1400);
+            setMsg(`LASER HIT! ${d} damage!`);
+          } else {
+            setFumble(true);
+            setTimeout(() => setFumble(false), 1400);
+            setMsg(`MISFIRE! Answer: ${question.a}`);
+          }
+          setShowQ(false);
+          setQuestion(null);
+          setTimeout(() => {
+            if (newMHp > 0) {
+              const md = Math.floor(Math.random() * 11) + 15;
+              newPHp = Math.max(0, pHp - md);
+              setPHp(newPHp);
+              setPDmg(md);
+              setPDmgShow(true);
+              setTimeout(() => setPDmgShow(false), 900);
+              setMsg((p) => p + ` Shields hit: -${md}!`);
+              setTimeout(() => {
+                if (newPHp <= 0) { setPhase('defeat'); setMsg('Hull Critical... Ship Destroyed.'); }
+              }, 900);
+            } else {
+              const newDef = [...defeated, monster.id];
+              setDefeated(newDef);
+              setPHp(100);
+              if (newDef.length === monsters.length) {
+                setPhase('victory');
+                setMsg('Sector Clear. Galaxy Safe.');
+              } else {
+                setTimeout(() => {
+                  setPhase('exploration');
+                  setMsg('Target Destroyed. Shields Recharged.');
+                  setPos((p) => ({ ...p, top: Math.min(92, p.top + 8) }));
+                }, 1400);
+              }
+            }
+          }, 1400);
+        };
+
+        const restart = () => {
+          setPhase('exploration');
+          setPHp(100);
+          setMonster(null);
+          setMHp(100);
+          setQuestion(null);
+          setShowQ(false);
+          setMsg('Click anywhere to navigate!');
+          setDefeated([]);
+          setPos({ top: 85, left: 50 });
+          spawnMonsters();
+        };
+
+        const bgStyle = (c) => ({
+          position: 'absolute', inset: 0,
+          background: `radial-gradient(ellipse at ${c}, #0c1428 0%, #000 65%)`,
+        });
+
+        const Stars = () => (
+          <>
+            {stars.s.map((s, i) => (
+              <div key={`gs${i}`} className="gd-pulse" style={{ position: 'absolute', top: `${s.top}%`, left: `${s.left}%`, width: 1, height: 1, borderRadius: '50%', background: '#fff', opacity: s.op, animationDuration: `${s.dur}s` }} />
+            ))}
+            {stars.m.map((s, i) => (
+              <div key={`gm${i}`} className="gd-pulse" style={{ position: 'absolute', top: `${s.top}%`, left: `${s.left}%`, width: 2, height: 2, borderRadius: '50%', background: '#fff', opacity: s.op, animationDuration: `${s.dur}s` }} />
+            ))}
+            {stars.l.map((s, i) => (
+              <div key={`gl${i}`} className="gd-pulse" style={{ position: 'absolute', top: `${s.top}%`, left: `${s.left}%`, width: 3, height: 3, borderRadius: '50%', background: '#dbeafe', opacity: s.op, boxShadow: '0 0 4px white', animationDuration: `${s.dur}s` }} />
+            ))}
+          </>
+        );
+
+        const wrap = { width: '100%', height: '100%', position: 'relative', overflow: 'hidden', fontFamily: mono, background: '#000' };
+
+        if (phase === 'exploration')
+          return (
+            <div onClick={mapClick} style={{ ...wrap, cursor: 'crosshair', userSelect: 'none' }}>
+              <div style={bgStyle('center')} />
+              <Stars />
+              <div style={{ position: 'absolute', top: 0, bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '30%', background: 'rgba(168,85,247,0.04)', filter: 'blur(80px)', pointerEvents: 'none' }} />
+              <div style={{ position: 'absolute', top: 12, left: 12, right: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', zIndex: 20, pointerEvents: 'none' }}>
+                <div style={{ background: 'rgba(10,20,40,0.9)', border: '1px solid rgba(6,182,212,0.35)', padding: '10px 14px', borderRadius: 6, backdropFilter: 'blur(6px)' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 900, color: '#22d3ee', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 6 }}>Galactic Defense</div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ width: 110, height: 10, background: '#1e293b', borderRadius: 9999, overflow: 'hidden' }}>
+                      <div style={{ height: '100%', background: '#06b6d4', width: `${pHp}%`, transition: 'width 0.4s' }} />
+                    </div>
+                    <span style={{ color: '#67e8f9', fontSize: '0.8rem', fontWeight: 700 }}>{pHp}%</span>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                  <div style={{ background: 'rgba(10,20,40,0.9)', border: '1px solid rgba(239,68,68,0.35)', padding: '10px 14px', borderRadius: 6, backdropFilter: 'blur(6px)' }}>
+                    <span style={{ color: '#f87171', fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Hostiles: {monsters.length - defeated.length}</span>
+                  </div>
+                  <button onClick={onClose} style={{ background: 'rgba(10,20,40,0.9)', border: '1px solid rgba(255,255,255,0.25)', color: 'white', padding: '10px 14px', borderRadius: 6, cursor: 'pointer', fontFamily: mono, fontSize: '0.75rem', letterSpacing: '2px', backdropFilter: 'blur(6px)', pointerEvents: 'auto' }}>[ CLOSE ]</button>
+                </div>
+              </div>
+              <div style={{ position: 'absolute', top: `${pos.top}%`, left: `${pos.left}%`, zIndex: 30, transform: sucking ? 'translate(-50%,-50%) scale(0) rotate(1080deg)' : 'translate(-50%,-50%) scale(1)', transition: sucking ? 'all 2.8s ease-in-out' : 'top 0.45s ease, left 0.45s ease' }}>
+                <div style={{ position: 'relative' }}>
+                  <div style={{ width: 40, height: 40, background: '#0891b2', borderRadius: '50%', boxShadow: '0 0 18px rgba(8,145,178,0.7)', border: '2px solid white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <RocketIcon s={20} r={-45} />
+                  </div>
+                  <div style={{ position: 'absolute', top: '100%', left: '50%', transform: 'translateX(-50%)', width: 6, height: 24, background: 'linear-gradient(to bottom,#f97316,transparent)', opacity: 0.85, filter: 'blur(3px)' }} />
+                  <div className="gd-pulse" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', width: 200, height: 200, border: '1px solid rgba(6,182,212,0.18)', borderRadius: '50%', pointerEvents: 'none' }} />
+                </div>
+              </div>
+              {monsters.map((m) => {
+                const dead = defeated.includes(m.id);
+                const close = gdist(pos, m.pos) <= 14;
+                return (
+                  <div key={m.id} className="gd-mwrap" style={{ position: 'absolute', top: `${m.pos.top}%`, left: `${m.pos.left}%`, transform: 'translate(-50%,-50%)', opacity: dead ? 0.18 : 1, filter: dead ? 'grayscale(100%)' : 'none', pointerEvents: dead ? 'none' : 'auto', zIndex: 10 }}>
+                    <div className="gd-float" style={{ position: 'relative', width: 54, height: 54, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <BlackHoleMonster diskColor={m.diskColor} size={54} />
+                      {sucking && monster?.id === m.id && (
+                        <div className="gd-ping" style={{ position: 'absolute', inset: -36, border: `3px solid ${m.diskColor}`, borderRadius: '50%', opacity: 0.9 }} />
+                      )}
+                      {!dead && close && !sucking && (
+                        <div className="gd-ping" style={{ position: 'absolute', inset: -8, border: `2px solid ${m.diskColor}`, borderRadius: '50%', opacity: 0.6 }} />
+                      )}
+                      <div className="gd-mlabel" style={{ position: 'absolute', bottom: -26, left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.88)', color: 'white', fontSize: '0.65rem', padding: '2px 7px', borderRadius: 4, whiteSpace: 'nowrap', border: '1px solid rgba(255,255,255,0.15)', pointerEvents: 'none', fontFamily: mono }}>
+                        {m.name}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              {msg && (
+                <div style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', background: 'rgba(0,0,0,0.88)', border: '1px solid rgba(6,182,212,0.45)', padding: '9px 20px', borderRadius: 9999, backdropFilter: 'blur(10px)', zIndex: 40, boxShadow: '0 0 16px rgba(6,182,212,0.25)', maxWidth: '80%', textAlign: 'center' }}>
+                  <p style={{ color: '#cffafe', fontFamily: mono, fontSize: '0.78rem', letterSpacing: '0.04em' }}>{msg}</p>
+                </div>
+              )}
+            </div>
+          );
+
+        if (phase === 'battle')
+          return (
+            <div style={{ ...wrap }}>
+              <div style={bgStyle('top')} />
+              <Stars />
+
+              {fumble && (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 50, pointerEvents: 'none', background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(2px)' }}>
+                  <h1 className="gd-bouncein" style={{ fontSize: 'min(6rem,14vw)', fontWeight: 900, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '-0.02em', textShadow: '0 0 25px rgba(220,38,38,0.9)', transform: 'rotate(-6deg)' }}>FUMBLE</h1>
+                </div>
+              )}
+              {attack && (
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 50, pointerEvents: 'none' }}>
+                  <h1 className="gd-crit" style={{ fontSize: 'min(5rem,12vw)', fontWeight: 900, color: '#facc15', textTransform: 'uppercase', letterSpacing: '0.1em', textShadow: '0 0 25px rgba(250,204,21,0.7)' }}>CRITICAL</h1>
+                  <p style={{ fontSize: 'min(3.5rem,9vw)', fontWeight: 700, color: 'white', marginTop: 6, textShadow: '0 4px 8px rgba(0,0,0,0.7)' }}>-{dmg}</p>
+                </div>
+              )}
+              {pDmgShow && (
+                <div className="gd-shake" style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 50, pointerEvents: 'none', background: 'rgba(239,68,68,0.2)' }}>
+                  <h1 style={{ fontSize: 'min(5rem,12vw)', fontWeight: 900, color: '#ef4444', textTransform: 'uppercase', letterSpacing: '0.1em', textShadow: '0 0 25px rgba(220,38,38,1)' }}>WARNING</h1>
+                  <p style={{ fontSize: 'min(3.5rem,9vw)', fontWeight: 700, color: 'white', marginTop: 6 }}>-{pDmg}</p>
+                </div>
+              )}
+
+              {/* ── BATTLE CLOSE BUTTON (top-left) ── */}
+              <button
+                onClick={onClose}
+                style={{
+                  position: 'absolute',
+                  top: 12,
+                  left: 12,
+                  zIndex: 60,
+                  background: 'rgba(10,20,40,0.9)',
+                  border: '1px solid rgba(255,255,255,0.25)',
+                  color: 'white',
+                  padding: '10px 14px',
+                  borderRadius: 6,
+                  cursor: 'pointer',
+                  fontFamily: mono,
+                  fontSize: '0.75rem',
+                  letterSpacing: '2px',
+                  backdropFilter: 'blur(6px)',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(30,50,80,0.95)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.6)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(10,20,40,0.9)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.25)'; }}
+              >
+                ← MAIN MENU
+              </button>
+
+              <div style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '16px 20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'flex-start' }}>
+                  <div style={{ textAlign: 'right', background: 'rgba(15,23,42,0.6)', padding: '10px 14px', borderBottomLeftRadius: 18, borderRight: `3px solid ${monster ? monster.diskColor + '80' : 'rgba(239,68,68,0.5)'}`, borderBottom: `1px solid ${monster ? monster.diskColor + '40' : 'rgba(239,68,68,0.3)'}`, backdropFilter: 'blur(10px)' }}>
+                    <div style={{ fontSize: '1.1rem', fontWeight: 700, color: monster ? monster.diskColor : '#f87171', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{monster.name}</div>
+                    <div style={{ width: 200, height: 14, background: '#1e293b', overflow: 'hidden', display: 'inline-block', position: 'relative', borderRadius: 2 }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', background: monster ? monster.diskColor : '#dc2626', width: `${mHp}%`, transition: 'width 0.3s' }} />
+                    </div>
+                    <div style={{ color: monster ? monster.diskColor + 'bb' : 'rgba(239,68,68,0.7)', fontSize: '0.72rem', marginTop: 3 }}>HULL: {mHp}%</div>
+                  </div>
+                </div>
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 5%', position: 'relative' }}>
+                  <div style={{ transform: 'translateY(30px)' }}>
+                    <div style={{ width: 100, height: 100, background: 'rgba(8,51,68,0.5)', borderRadius: '50%', boxShadow: '0 0 40px rgba(8,145,178,0.4)', border: '3px solid rgba(34,211,238,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                      <RocketIcon s={50} c="#22d3ee" r={45} />
+                      <div style={{ position: 'absolute', bottom: -12, width: '100%', height: 12, background: 'rgba(6,182,212,0.2)', filter: 'blur(6px)', borderRadius: '50%' }} />
+                    </div>
+                  </div>
+                  <div style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%,-50%)', opacity: 0.12 }}>
+                    <span style={{ fontSize: 'min(6rem,12vw)', fontWeight: 900, color: 'white', fontStyle: 'italic' }}>VS</span>
+                  </div>
+                  <div style={{ transform: 'translateY(-30px)' }}>
+                    <div className="gd-float" style={{ width: 120, height: 120, borderRadius: '50%', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <BlackHoleMonster diskColor={monster ? monster.diskColor : '#a855f7'} size={120} />
+                      <div style={{ position: 'absolute', bottom: -12, width: '100%', height: 12, background: monster ? monster.diskColor + '33' : 'rgba(239,68,68,0.2)', filter: 'blur(6px)', borderRadius: '50%' }} />
+                    </div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16, flexWrap: 'wrap' }}>
+                  <div style={{ background: 'rgba(15,23,42,0.6)', padding: '10px 14px', borderTopRightRadius: 18, borderLeft: '3px solid rgba(6,182,212,0.5)', borderTop: '1px solid rgba(6,182,212,0.3)', backdropFilter: 'blur(10px)', minWidth: 180 }}>
+                    <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#22d3ee', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em' }}>USS Antibody</div>
+                    <div style={{ width: '100%', height: 14, background: '#1e293b', overflow: 'hidden', position: 'relative', borderRadius: 2 }}>
+                      <div style={{ position: 'absolute', top: 0, left: 0, height: '100%', background: '#06b6d4', width: `${pHp}%`, transition: 'width 0.3s' }} />
+                    </div>
+                    <div style={{ color: 'rgba(6,182,212,0.75)', fontSize: '0.72rem', marginTop: 3 }}>SHIELDS: {pHp}%</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                    {[
+                      { label: 'Fire Lasers', icon: <SwordIcon />, bg: 'rgba(220,38,38,0.85)', border: '#f87171' },
+                      { label: 'Photon Torpedoes', icon: <CrosshairIcon />, bg: 'rgba(234,88,12,0.85)', border: '#fb923c' },
+                    ].map(({ label, icon, bg, border }) => (
+                      <button key={label} onClick={doAttack} disabled={showQ} style={{ background: showQ ? '#1e293b' : bg, color: 'white', fontWeight: 700, padding: '11px 18px', border: `1px solid ${border}`, cursor: showQ ? 'not-allowed' : 'pointer', textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', transition: 'all 0.2s', opacity: showQ ? 0.45 : 1, borderRadius: 2 }}>
+                        {icon}{label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {showQ && question && (
+                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.88)', backdropFilter: 'blur(8px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 40, padding: 16 }}>
+                  <div style={{ background: 'rgba(10,18,35,0.98)', border: '1px solid rgba(6,182,212,0.5)', padding: '24px 28px', maxWidth: 560, width: '100%', boxShadow: '0 0 40px rgba(6,182,212,0.25)', position: 'relative', borderRadius: 4 }}>
+                    <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', opacity: 0.12, borderRadius: 4, background: 'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.5) 2px,rgba(0,0,0,0.5) 4px)' }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20, borderBottom: '1px solid rgba(6,182,212,0.3)', paddingBottom: 12, position: 'relative', zIndex: 1 }}>
+                      <span style={{ fontSize: '1rem', fontWeight: 700, color: '#22d3ee', fontFamily: mono }}>TARGETING COMPUTER</span>
+                      <ZapIcon s={20} c="#facc15" />
+                    </div>
+                    <p style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: 20, textAlign: 'center', color: 'white', position: 'relative', zIndex: 1, fontFamily: mono, lineHeight: 1.4 }}>{question.q}</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, position: 'relative', zIndex: 1 }}>
+                      {question.opts.map((opt, i) => (
+                        <button key={i} onClick={() => answer(opt)} style={{ background: 'rgba(20,32,52,0.95)', color: '#cffafe', padding: '14px', border: '1px solid rgba(6,182,212,0.3)', cursor: 'pointer', fontSize: '0.95rem', fontFamily: mono, transition: 'all 0.15s', borderRadius: 2 }}
+                          onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(8,100,160,0.4)'; e.currentTarget.style.borderColor = '#22d3ee'; }}
+                          onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(20,32,52,0.95)'; e.currentTarget.style.borderColor = 'rgba(6,182,212,0.3)'; }}>
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+
+        return (
+          <div style={{ ...wrap, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <div style={bgStyle('center')} />
+            <Stars />
+            <div style={{ position: 'relative', zIndex: 10, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <h1 style={{ fontSize: 'min(3rem,8vw)', fontWeight: 900, marginBottom: 20, textTransform: 'uppercase', letterSpacing: '0.1em', color: phase === 'victory' ? '#22c55e' : '#ef4444', textShadow: `0 0 25px ${phase === 'victory' ? 'rgba(34,197,94,0.6)' : 'rgba(239,68,68,0.6)'}` }}>
+                {phase === 'victory' ? 'Mission Accomplished' : 'Signal Lost'}
+              </h1>
+              <p style={{ fontSize: '1rem', color: '#94a3b8', marginBottom: 36, maxWidth: 480, fontFamily: mono }}>{msg}</p>
+              <div style={{ display: 'flex', gap: 16 }}>
+                <button onClick={restart} style={{ background: '#0891b2', color: 'white', fontWeight: 700, padding: '13px 40px', border: '1px solid #22d3ee', boxShadow: '0 0 18px rgba(8,145,178,0.5)', fontSize: '1rem', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: mono, borderRadius: 2, transition: 'all 0.2s' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = '#06b6d4')}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = '#0891b2')}>
+                  Re-Initialize
+                </button>
+                <button onClick={onClose} style={{ background: 'transparent', color: 'white', fontWeight: 700, padding: '13px 30px', border: '1px solid rgba(255,255,255,0.3)', fontSize: '1rem', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: mono, borderRadius: 2, transition: 'all 0.2s' }}
+                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = 'white')}
+                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.3)')}>
+                  [ CLOSE ]
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      };
+
+      window.mountGalacticDefense = (container, onClose) => {
+        const root = ReactDOM.createRoot(container);
+        root.render(<GalacticDefense onClose={onClose} />);
+        return root;
+      };
+    </script>
+
+    <script>
+      const gameData = [
+        { title: 'SPACE MISSION', desc: 'Navigate your ship through hostile space. Engage enemy entities and answer space questions to destroy them.' },
+        { title: 'SPACE PUZZLE', desc: 'Decode the cosmos — fill in the 5×5 crossword with space-themed answers across and down.' },
+        { title: 'SPACE JEOPARDY', desc: 'Sector Intelligence: pick a category, answer correctly, and rack up points in this 6×6 Jeopardy board.' },
+      ];
+
+      let activeIndex = 0;
+      let animationCleanup = null;
+
+      function startMissionAnim(canvas) {
+        const ctx = canvas.getContext('2d');
+        const W = canvas.width, H = canvas.height;
+        const CYCLE = 12000;
+        let start = null, raf;
+        const stars = Array.from({ length: 100 }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.8 + 0.3, op: Math.random() * 0.7 + 0.3, twinkle: Math.random() * Math.PI * 2 }));
+        const nebulae = [
+          { x: W * 0.15, y: H * 0.2, r: W * 0.18, c: 'rgba(120,40,180,0.06)' },
+          { x: W * 0.8, y: H * 0.7, r: W * 0.22, c: 'rgba(20,80,200,0.07)' },
+          { x: W * 0.5, y: H * 0.5, r: W * 0.3, c: 'rgba(0,60,120,0.05)' },
+        ];
+        const holes = [{ x: W * 0.22, y: H * 0.28 }, { x: W * 0.74, y: H * 0.55 }, { x: W * 0.5, y: H * 0.72 }, { x: W * 0.82, y: H * 0.22 }];
+        const path = [{ x: W * 0.12, y: H * 0.85 }, { x: W * 0.3, y: H * 0.55 }, { x: W * 0.55, y: H * 0.2 }, { x: W * 0.68, y: H * 0.45 }, { x: W * 0.88, y: H * 0.35 }, { x: W * 0.75, y: H * 0.75 }, { x: W * 0.4, y: H * 0.88 }, { x: W * 0.12, y: H * 0.85 }];
+        function posOnPath(t) {
+          const segs = path.length - 1; const seg = Math.min(Math.floor(t * segs), segs - 1); const lt = t * segs - seg; const a = path[seg], b = path[seg + 1];
+          return { x: a.x + (b.x - a.x) * lt, y: a.y + (b.y - a.y) * lt };
+        }
+        function drawRocket(x, y, angle, ts) {
+          ctx.save(); ctx.translate(x, y); ctx.rotate(angle);
+          const flicker1 = 22 + Math.sin(ts * 0.025) * 5; const flicker2 = 14 + Math.sin(ts * 0.04 + 1) * 4;
+          const flameGrad1 = ctx.createRadialGradient(0, 18, 0, 0, 22, flicker1);
+          flameGrad1.addColorStop(0, 'rgba(255,220,80,0.95)'); flameGrad1.addColorStop(0.3, 'rgba(255,130,30,0.8)'); flameGrad1.addColorStop(0.7, 'rgba(200,50,0,0.4)'); flameGrad1.addColorStop(1, 'rgba(150,0,0,0)');
+          ctx.beginPath(); ctx.ellipse(0, 18 + flicker1 * 0.3, 7, flicker1, 0, 0, Math.PI * 2); ctx.fillStyle = flameGrad1; ctx.fill();
+          const flameGrad2 = ctx.createRadialGradient(0, 16, 0, 0, 18, flicker2);
+          flameGrad2.addColorStop(0, 'rgba(255,255,200,1)'); flameGrad2.addColorStop(0.5, 'rgba(255,200,50,0.9)'); flameGrad2.addColorStop(1, 'rgba(255,100,0,0)');
+          ctx.beginPath(); ctx.ellipse(0, 17, 4, flicker2, 0, 0, Math.PI * 2); ctx.fillStyle = flameGrad2; ctx.fill();
+          const bodyGrad = ctx.createLinearGradient(-10, -22, 10, 10);
+          bodyGrad.addColorStop(0, '#b8e8f8'); bodyGrad.addColorStop(0.3, '#38b2d8'); bodyGrad.addColorStop(0.7, '#0e7fa8'); bodyGrad.addColorStop(1, '#054b66');
+          ctx.beginPath(); ctx.moveTo(-7, 6); ctx.lineTo(-7, -10); ctx.quadraticCurveTo(-7, -14, 0, -22); ctx.quadraticCurveTo(7, -14, 7, -10); ctx.lineTo(7, 6); ctx.closePath(); ctx.fillStyle = bodyGrad; ctx.fill();
+          ctx.strokeStyle = 'rgba(150,230,255,0.6)'; ctx.lineWidth = 0.8; ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(-4, -8); ctx.lineTo(-4, 4); ctx.strokeStyle = 'rgba(200,240,255,0.35)'; ctx.lineWidth = 1.5; ctx.stroke();
+          const cockpitGrad = ctx.createRadialGradient(-1.5, -12, 0, 0, -11, 5);
+          cockpitGrad.addColorStop(0, 'rgba(180,240,255,0.95)'); cockpitGrad.addColorStop(0.4, 'rgba(50,150,220,0.8)'); cockpitGrad.addColorStop(1, 'rgba(10,60,120,0.9)');
+          ctx.beginPath(); ctx.ellipse(0, -12, 4, 5, 0, 0, Math.PI * 2); ctx.fillStyle = cockpitGrad; ctx.fill(); ctx.strokeStyle = 'rgba(100,200,255,0.8)'; ctx.lineWidth = 0.8; ctx.stroke();
+          ctx.beginPath(); ctx.ellipse(-1.5, -14, 1.2, 1.8, -0.4, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.fill();
+          const wingGradL = ctx.createLinearGradient(-18, 0, -7, 8); wingGradL.addColorStop(0, '#1a6080'); wingGradL.addColorStop(1, '#0a3550');
+          ctx.beginPath(); ctx.moveTo(-7, -2); ctx.lineTo(-18, 8); ctx.lineTo(-16, 12); ctx.lineTo(-7, 8); ctx.closePath(); ctx.fillStyle = wingGradL; ctx.fill(); ctx.strokeStyle = 'rgba(100,200,240,0.4)'; ctx.lineWidth = 0.7; ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(-8, 0); ctx.lineTo(-15, 9); ctx.strokeStyle = 'rgba(0,180,255,0.25)'; ctx.lineWidth = 0.8; ctx.stroke();
+          const wingGradR = ctx.createLinearGradient(7, 0, 18, 8); wingGradR.addColorStop(0, '#1e7090'); wingGradR.addColorStop(1, '#0a3550');
+          ctx.beginPath(); ctx.moveTo(7, -2); ctx.lineTo(18, 8); ctx.lineTo(16, 12); ctx.lineTo(7, 8); ctx.closePath(); ctx.fillStyle = wingGradR; ctx.fill(); ctx.strokeStyle = 'rgba(100,200,240,0.4)'; ctx.lineWidth = 0.7; ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(15, 9); ctx.strokeStyle = 'rgba(0,180,255,0.25)'; ctx.lineWidth = 0.8; ctx.stroke();
+          const engineGrad = ctx.createLinearGradient(-5, 6, 5, 16); engineGrad.addColorStop(0, '#1a8090'); engineGrad.addColorStop(1, '#0a3040');
+          ctx.beginPath(); ctx.roundRect(-5, 6, 10, 10, 2); ctx.fillStyle = engineGrad; ctx.fill(); ctx.strokeStyle = 'rgba(0,200,255,0.5)'; ctx.lineWidth = 0.8; ctx.stroke();
+          const ringGrad = ctx.createRadialGradient(0, 16, 0, 0, 16, 8); ringGrad.addColorStop(0, 'rgba(0,220,255,0.6)'); ringGrad.addColorStop(0.5, 'rgba(0,150,255,0.3)'); ringGrad.addColorStop(1, 'rgba(0,80,255,0)');
+          ctx.beginPath(); ctx.arc(0, 16, 8, 0, Math.PI * 2); ctx.fillStyle = ringGrad; ctx.fill();
+          ctx.beginPath(); ctx.arc(0, -21, 1.5, 0, Math.PI * 2); ctx.fillStyle = '#ff6040'; ctx.fill(); ctx.restore();
+        }
+        function drawBlackHole(x, y, ts) {
+          const pulse = 1 + 0.07 * Math.sin(ts * 0.002 + x); const diskOuter = 52 * pulse, diskInner = 30 * pulse;
+          const diskGrad = ctx.createRadialGradient(x, y, diskInner, x, y, diskOuter);
+          diskGrad.addColorStop(0, 'rgba(255,200,80,0.18)'); diskGrad.addColorStop(0.3, 'rgba(200,100,255,0.12)'); diskGrad.addColorStop(0.7, 'rgba(80,0,200,0.06)'); diskGrad.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.beginPath(); ctx.arc(x, y, diskOuter, 0, Math.PI * 2); ctx.fillStyle = diskGrad; ctx.fill();
+          [48, 36].forEach((r, i) => { ctx.beginPath(); ctx.arc(x, y, r * pulse, 0, Math.PI * 2); ctx.strokeStyle = `rgba(168,85,247,${0.1 + i * 0.08})`; ctx.lineWidth = 2 - i * 0.5; ctx.stroke(); });
+          const cg = ctx.createRadialGradient(x, y, 0, x, y, 22 * pulse);
+          cg.addColorStop(0, 'rgba(0,0,0,1)'); cg.addColorStop(0.35, 'rgba(0,0,30,0.95)'); cg.addColorStop(0.6, 'rgba(60,0,120,0.5)'); cg.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.beginPath(); ctx.arc(x, y, 22 * pulse, 0, Math.PI * 2); ctx.fillStyle = cg; ctx.fill();
+          ctx.beginPath(); ctx.arc(x, y, 24 * pulse, 0, Math.PI * 2); ctx.strokeStyle = `rgba(220,180,255,${0.25 + 0.1 * Math.sin(ts * 0.003)})`; ctx.lineWidth = 1.5; ctx.stroke();
+        }
+        function draw(ts) {
+          if (!start) start = ts; const elapsed = (ts - start) % CYCLE; const animT = Math.min(elapsed, 10000); const pathT = animT / 10000;
+          ctx.clearRect(0, 0, W, H);
+          const bg = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.7); bg.addColorStop(0, '#0c1428'); bg.addColorStop(1, '#000'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+          nebulae.forEach((n) => { const ng = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r); ng.addColorStop(0, n.c); ng.addColorStop(1, 'rgba(0,0,0,0)'); ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2); ctx.fillStyle = ng; ctx.fill(); });
+          stars.forEach((s, i) => {
+            const twinkle = s.op * (0.7 + 0.3 * Math.sin(ts * 0.001 * ((i % 5) + 1) + s.twinkle));
+            ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(255,255,255,${twinkle})`; ctx.fill();
+            if (s.r > 1.4 && twinkle > 0.7) { ctx.strokeStyle = `rgba(200,230,255,${(twinkle - 0.7) * 1.5})`; ctx.lineWidth = 0.5; ctx.beginPath(); ctx.moveTo(s.x - s.r * 3, s.y); ctx.lineTo(s.x + s.r * 3, s.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(s.x, s.y - s.r * 3); ctx.lineTo(s.x, s.y + s.r * 3); ctx.stroke(); }
+          });
+          holes.forEach((h) => drawBlackHole(h.x, h.y, ts));
+          if (pathT < 1) {
+            const { x, y } = posOnPath(pathT); const next = posOnPath(Math.min(pathT + 0.008, 1)); const angle = Math.atan2(next.x - x, -(next.y - y));
+            for (let i = 1; i <= 12; i++) { const tp = posOnPath(Math.max(0, pathT - i * 0.005)); ctx.beginPath(); ctx.arc(tp.x, tp.y, Math.max(0.2, 3.5 - i * 0.25), 0, Math.PI * 2); ctx.fillStyle = `rgba(8,145,178,${Math.max(0, 0.5 - i * 0.04)})`; ctx.fill(); }
+            for (let i = 1; i <= 6; i++) { const tp = posOnPath(Math.max(0, pathT - i * 0.003)); ctx.beginPath(); ctx.arc(tp.x, tp.y, 6 - i * 0.7, 0, Math.PI * 2); ctx.fillStyle = `rgba(255,150,30,${0.15 - i * 0.02})`; ctx.fill(); }
+            const aura = ctx.createRadialGradient(x, y, 0, x, y, 22); aura.addColorStop(0, 'rgba(8,145,178,0.18)'); aura.addColorStop(1, 'rgba(0,0,0,0)'); ctx.beginPath(); ctx.arc(x, y, 22, 0, Math.PI * 2); ctx.fillStyle = aura; ctx.fill();
+            ctx.save(); ctx.translate(x, y); ctx.scale(0.7, 0.7); ctx.translate(-x, -y); drawRocket(x, y, angle, ts); ctx.restore();
+          }
+          raf = requestAnimationFrame(draw);
+        }
+        raf = requestAnimationFrame(draw);
+        return () => cancelAnimationFrame(raf);
+      }
+
+      function startPuzzleAnim(canvas) {
+        const ctx = canvas.getContext('2d'); const W = canvas.width, H = canvas.height; const CYCLE = 15000; let start = null, raf;
+        const GRID = [['S','P','A','C','E'],['_','L','_','_','_'],['O','U','T','E','R'],['_','T','_','_','_'],['R','O','B','O','T']];
+        const isBlack = (r, c) => GRID[r][c] === '_';
+        const acrossSeqs = [{ row: 0, tStart: 400 }, { row: 2, tStart: 3000 }, { row: 4, tStart: 6000 }];
+        const downSeq = { col: 1, rows: [0, 1, 2, 3, 4], tStart: 1800 };
+        const clues = [
+          { label: 'ACROSS 1', text: 'The final frontier (5)', color: '#22d3ee', solveT: 400, doneT: 400 + 4 * 240 + 300 },
+          { label: 'ACROSS 2', text: 'Beyond the boundary (5)', color: '#22d3ee', solveT: 3000, doneT: 3000 + 4 * 240 + 300 },
+          { label: 'ACROSS 3', text: 'Mechanical being (5)', color: '#22d3ee', solveT: 6000, doneT: 6000 + 4 * 240 + 300 },
+          { label: 'DOWN 1', text: 'Icy dwarf planet (5)', color: '#b080ff', solveT: 1800, doneT: 1800 + 4 * 280 + 300 },
+        ];
+        const gridAreaW = W * 0.56, clueAreaX = W * 0.62, clueAreaW = W - W * 0.62 - W * 0.03;
+        const topPad = H * 0.08, botPad = H * 0.08, COLS = 5, ROWS = 5;
+        const availH = H - topPad - botPad;
+        const CELL = Math.floor(Math.min(gridAreaW / COLS, availH / ROWS) * 0.9);
+        const GAP = Math.max(2, Math.floor(CELL * 0.08));
+        const gridW = COLS * CELL + (COLS - 1) * GAP, gridH = ROWS * CELL + (ROWS - 1) * GAP;
+        const ox = (gridAreaW - gridW) / 2 + W * 0.02, oy = topPad + (availH - gridH) / 2;
+        function cellPos(r, c) { return { x: ox + c * (CELL + GAP), y: oy + r * (CELL + GAP) }; }
+        function getCellAlpha(t, r, c) {
+          let alpha = 0; const aseq = acrossSeqs.find((s) => s.row === r);
+          if (aseq && !isBlack(r, c)) { const a = Math.min(1, Math.max(0, (t - (aseq.tStart + c * 240)) / 180)); if (a > alpha) alpha = a; }
+          if (c === downSeq.col) { const idx = downSeq.rows.indexOf(r); if (idx !== -1) { const a = Math.min(1, Math.max(0, (t - (downSeq.tStart + idx * 280)) / 180)); if (a > alpha) alpha = a; } }
+          return alpha;
+        }
+        function isDownCell(r, c) { return c === downSeq.col && downSeq.rows.includes(r); }
+        function isAcrossCell(r, c) { return acrossSeqs.some((s) => s.row === r) && !isBlack(r, c); }
+        function draw(ts) {
+          if (!start) start = ts; const t = (ts - start) % CYCLE; ctx.clearRect(0, 0, W, H);
+          const bg = ctx.createRadialGradient(W * 0.35, H * 0.4, 0, W * 0.35, H * 0.5, W * 0.8); bg.addColorStop(0, '#080c1a'); bg.addColorStop(1, '#000005'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+          for (let i = 0; i < 45; i++) { const sx = (Math.sin(i * 127.1 + 0.3) * 0.5 + 0.5) * gridAreaW; const sy = (Math.cos(i * 311.7 + 0.7) * 0.5 + 0.5) * H; const sr = 0.4 + (Math.sin(i * 73.1) * 0.5 + 0.5) * 1.1; const op = 0.2 + Math.sin(ts * 0.0007 + i) * 0.1; ctx.beginPath(); ctx.arc(sx, sy, sr, 0, Math.PI * 2); ctx.fillStyle = `rgba(180,210,255,${op})`; ctx.fill(); }
+          const allSolvedT = 6000 + 4 * 240 + 900; const completionGlow = Math.min(1, Math.max(0, (t - allSolvedT) / 700));
+          if (completionGlow > 0) { const aura = ctx.createRadialGradient(ox + gridW / 2, oy + gridH / 2, 20, ox + gridW / 2, oy + gridH / 2, gridH); aura.addColorStop(0, `rgba(0,200,255,${completionGlow * 0.08})`); aura.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = aura; ctx.fillRect(0, 0, W, H); }
+          for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+              const { x, y } = cellPos(r, c);
+              if (isBlack(r, c)) { ctx.fillStyle = 'rgba(255,255,255,0.015)'; ctx.fillRect(x, y, CELL, CELL); ctx.beginPath(); ctx.arc(x + CELL / 2, y + CELL / 2, 1.1, 0, Math.PI * 2); ctx.fillStyle = 'rgba(80,120,180,0.1)'; ctx.fill(); continue; }
+              const letterAlpha = getCellAlpha(t, r, c); const isRevealed = letterAlpha > 0.5; const glowAmt = letterAlpha * (1 + completionGlow * 0.6);
+              const cellBg = ctx.createLinearGradient(x, y, x + CELL, y + CELL);
+              if (isRevealed) { cellBg.addColorStop(0, `rgba(0,35,75,${0.78 + completionGlow * 0.15})`); cellBg.addColorStop(1, 'rgba(0,15,45,0.92)'); } else { cellBg.addColorStop(0, 'rgba(8,12,28,0.65)'); cellBg.addColorStop(1, 'rgba(4,6,18,0.85)'); }
+              ctx.fillStyle = cellBg; ctx.fillRect(x, y, CELL, CELL);
+              ctx.strokeStyle = completionGlow > 0.5 ? `rgba(120,230,255,${isRevealed ? 0.9 : 0.2})` : isRevealed ? 'rgba(0,170,255,0.6)' : 'rgba(35,70,130,0.32)'; ctx.lineWidth = isRevealed ? 1.4 : 0.8; ctx.strokeRect(x + 0.75, y + 0.75, CELL - 1.5, CELL - 1.5);
+              if (isRevealed) { ctx.save(); ctx.shadowColor = 'rgba(0,160,255,0.4)'; ctx.shadowBlur = 7 * glowAmt; ctx.strokeStyle = `rgba(0,200,255,${0.11 * glowAmt})`; ctx.lineWidth = 3.5; ctx.strokeRect(x + 1, y + 1, CELL - 2, CELL - 2); ctx.restore(); }
+              if (letterAlpha > 0) {
+                const letter = GRID[r][c]; const inDown = isDownCell(r, c), inAcross = isAcrossCell(r, c);
+                let lc = '#22d3ee'; if (inDown && !inAcross) lc = '#b080ff'; if (inDown && inAcross) lc = '#ddf4ff'; if (completionGlow > 0.35) lc = '#c8eeff';
+                ctx.save(); ctx.shadowColor = inDown && !inAcross ? 'rgba(150,80,255,0.85)' : 'rgba(0,190,255,0.85)'; ctx.shadowBlur = 11 * letterAlpha; ctx.globalAlpha = letterAlpha; ctx.fillStyle = lc;
+                ctx.font = `bold ${Math.floor(CELL * 0.55)}px 'Share Tech Mono', monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(letter, x + CELL / 2, y + CELL / 2 + 1); ctx.restore();
+                if (letterAlpha > 0.04 && letterAlpha < 0.65) { const cur = Math.sin(ts * 0.016) * 0.5 + 0.5; ctx.fillStyle = `rgba(0,210,255,${cur * 0.7})`; ctx.fillRect(x + CELL * 0.24, y + CELL * 0.76, CELL * 0.52, 2); }
+              }
+            }
+          }
+          ctx.strokeStyle = 'rgba(50,90,160,0.35)'; ctx.lineWidth = 1; ctx.setLineDash([4, 6]); ctx.beginPath(); ctx.moveTo(clueAreaX - W * 0.02, oy); ctx.lineTo(clueAreaX - W * 0.02, oy + gridH); ctx.stroke(); ctx.setLineDash([]);
+          ctx.fillStyle = 'rgba(100,160,220,0.5)'; ctx.font = `bold ${Math.max(8, Math.floor(H * 0.028))}px 'Syncopate', sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText('CLUES', clueAreaX, oy);
+          const clueLineH = gridH / (clues.length + 0.6);
+          clues.forEach((clue, i) => {
+            const cy = oy + clueLineH * 0.5 + i * clueLineH; const isDone = t > clue.doneT, isActive = t >= clue.solveT && !isDone; const baseAlpha = isDone ? 0.45 : isActive ? 1.0 : 0.3; const pulse = isActive ? 0.85 + 0.15 * Math.sin(ts * 0.006) : 1; const alpha = baseAlpha * pulse;
+            if (isActive) { ctx.save(); ctx.globalAlpha = 0.18 * pulse; ctx.fillStyle = clue.color === '#b080ff' ? 'rgba(120,40,200,1)' : 'rgba(0,80,180,1)'; ctx.beginPath(); ctx.roundRect(clueAreaX - 4, cy - clueLineH * 0.38, clueAreaW + 4, clueLineH * 0.76, 4); ctx.fill(); ctx.restore(); }
+            ctx.save(); ctx.globalAlpha = alpha; ctx.shadowColor = clue.color; ctx.shadowBlur = isActive ? 8 : 0; ctx.fillStyle = clue.color;
+            const labelSize = Math.max(7, Math.floor(H * 0.026)); ctx.font = `bold ${labelSize}px 'Share Tech Mono', monospace`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText(clue.label, clueAreaX, cy - labelSize * 0.7);
+            ctx.globalAlpha = alpha * 0.85; ctx.shadowBlur = 0; ctx.fillStyle = isDone ? 'rgba(100,200,120,0.9)' : 'rgba(200,220,255,0.9)';
+            const textSize = Math.max(7, Math.floor(H * 0.028)); ctx.font = `${textSize}px 'Share Tech Mono', monospace`;
+            const words = clue.text.split(' '); let line = '', lineY = cy + labelSize * 0.3;
+            for (const word of words) { const test = line ? line + ' ' + word : word; if (ctx.measureText(test).width > clueAreaW && line) { ctx.fillText(line, clueAreaX, lineY); line = word; lineY += textSize * 1.4; } else { line = test; } }
+            if (line) ctx.fillText(line, clueAreaX, lineY);
+            if (isDone) { ctx.globalAlpha = Math.min(1, (t - clue.doneT) / 400) * 0.9; ctx.fillStyle = '#4ade80'; ctx.shadowColor = '#4ade80'; ctx.shadowBlur = 6; ctx.font = `bold ${Math.floor(labelSize * 1.4)}px sans-serif`; ctx.textAlign = 'right'; ctx.fillText('✓', clueAreaX + clueAreaW, cy); }
+            ctx.restore();
+          });
+          const solvedT = Math.max(0, t - allSolvedT + 400);
+          if (solvedT > 0 && solvedT < 2200) { const fa = Math.min(1, solvedT / 350) * (1 - Math.min(1, (solvedT - 1500) / 700)); ctx.save(); ctx.globalAlpha = fa; ctx.shadowColor = '#00ccff'; ctx.shadowBlur = 35; ctx.fillStyle = '#00eeff'; ctx.font = `bold ${Math.floor(W * 0.065)}px 'Share Tech Mono', monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('SOLVED!', ox + gridW / 2, oy - H * 0.05); ctx.restore(); }
+          raf = requestAnimationFrame(draw);
+        }
+        raf = requestAnimationFrame(draw);
+        return () => cancelAnimationFrame(raf);
+      }
+
+      function startJeopardyAnim(canvas) {
+        const ctx = canvas.getContext('2d'); const W = canvas.width, H = canvas.height; const CYCLE = 12000; let start = null, raf;
+        const cats = ['PLANETS', 'STARS', 'MOONS', 'HISTORY']; const vals = [100, 200, 300, 400, 500];
+        const COLS = cats.length, ROWS = vals.length; const scoreH = H * 0.1, headerH = H * 0.12;
+        const gridTop = headerH + H * 0.02, gridBottom = H - scoreH - H * 0.02;
+        const gridH = gridBottom - gridTop, cellW = (W * 0.92) / COLS, cellH = gridH / ROWS;
+        const ox = (W - COLS * cellW) / 2; let score = 0;
+        const flips = [
+          { col: 2, row: 1, val: 200, q: 'Which planet has rings?', a: 'Saturn', t: 800 },
+          { col: 0, row: 3, val: 400, q: 'Closest star to Earth?', a: 'The Sun', t: 4500 },
+          { col: 3, row: 0, val: 100, q: 'How many planets in solar?', a: 'Eight', t: 8000 },
+        ];
+        function draw(ts) {
+          if (!start) start = ts; const t = (ts - start) % CYCLE; if (t < 16) score = 0;
+          ctx.clearRect(0, 0, W, H);
+          const bg = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.7); bg.addColorStop(0, '#00001a'); bg.addColorStop(1, '#000'); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+          cats.forEach((cat, c) => { const x = ox + c * cellW, y = H * 0.02, hw = cellW - 6; ctx.fillStyle = '#000033'; ctx.fillRect(x, y, hw, headerH - 4); ctx.strokeStyle = 'rgba(255,255,255,0.45)'; ctx.lineWidth = 1; ctx.strokeRect(x, y, hw, headerH - 4); ctx.fillStyle = 'white'; ctx.font = `bold ${Math.max(8, Math.floor(hw * 0.115))}px 'Syncopate', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(cat, x + hw / 2, y + (headerH - 4) / 2); });
+          for (let r = 0; r < ROWS; r++) {
+            for (let c = 0; c < COLS; c++) {
+              const x = ox + c * cellW, y = gridTop + r * cellH, cw = cellW - 6, ch = cellH - 6;
+              const flip = flips.find((f) => f.col === c && f.row === r); let answered = false, inQuestion = false;
+              if (flip) { if (t > flip.t + 2200) answered = true; else if (t > flip.t + 200) inQuestion = true; }
+              ctx.fillStyle = answered ? 'rgba(0,0,80,0.3)' : inQuestion ? '#000066' : '#000088'; ctx.fillRect(x, y, cw, ch);
+              ctx.strokeStyle = inQuestion ? '#facc15' : 'rgba(255,255,255,0.3)'; ctx.lineWidth = inQuestion ? 2 : 1; ctx.strokeRect(x, y, cw, ch);
+              if (!answered && !inQuestion) { ctx.fillStyle = '#FFCC00'; ctx.font = `bold ${Math.max(10, Math.floor(ch * 0.3))}px 'Syncopate', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('$' + vals[r], x + cw / 2, y + ch / 2); }
+              if (answered) { ctx.fillStyle = 'rgba(255,255,255,0.08)'; ctx.fillRect(x, y, cw, ch); }
+            }
+          }
+          const aq = flips.find((f) => t > f.t + 200 && t < f.t + 2200);
+          if (aq) {
+            const qProg = Math.min(1, (t - aq.t - 200) / 300); const aProg = t > aq.t + 1200 ? Math.min(1, (t - aq.t - 1200) / 300) : 0;
+            ctx.fillStyle = `rgba(0,0,0,${0.55 * qProg})`; ctx.fillRect(0, 0, W, H);
+            const bx = W * 0.08, by = H * 0.25, bw = W * 0.84, bh = H * 0.42;
+            ctx.save(); ctx.globalAlpha = qProg; ctx.fillStyle = '#00004d'; ctx.fillRect(bx, by, bw, bh); ctx.strokeStyle = '#facc15'; ctx.lineWidth = 2; ctx.strokeRect(bx, by, bw, bh);
+            ctx.fillStyle = '#facc15'; ctx.font = `bold ${Math.max(8, Math.floor(W * 0.022))}px 'Syncopate', sans-serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.fillText(cats[aq.col] + '  —  $' + aq.val, W / 2, by + H * 0.03);
+            ctx.fillStyle = 'white'; ctx.font = `${Math.max(10, Math.floor(W * 0.028))}px 'Share Tech Mono', monospace`; ctx.textBaseline = 'middle'; ctx.fillText(aq.q, W / 2, by + bh * 0.52); ctx.restore();
+            if (aProg > 0) { ctx.save(); ctx.globalAlpha = aProg; ctx.fillStyle = '#22c55e'; ctx.font = `bold ${Math.max(10, Math.floor(W * 0.038))}px 'Share Tech Mono', monospace`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('✓  ' + aq.a, W / 2, by + bh * 0.75); ctx.restore(); if (aProg > 0.5) { score = flips.filter((f) => t > f.t + 1500 && f.val <= aq.val).reduce((s, f) => s + f.val, 0); } }
+          }
+          const scoreY = H - scoreH + 4; ctx.fillStyle = 'rgba(0,0,40,0.7)'; ctx.fillRect(ox, scoreY, cellW * 1.8, scoreH - 8); ctx.strokeStyle = 'rgba(250,204,21,0.5)'; ctx.lineWidth = 1; ctx.strokeRect(ox, scoreY, cellW * 1.8, scoreH - 8);
+          ctx.fillStyle = 'rgba(250,204,21,0.9)'; ctx.font = `bold ${Math.max(9, Math.floor(scoreH * 0.36))}px 'Syncopate', sans-serif`; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText('SCORE: $' + score, ox + 10, scoreY + (scoreH - 8) / 2);
+          raf = requestAnimationFrame(draw);
+        }
+        raf = requestAnimationFrame(draw);
+        return () => cancelAnimationFrame(raf);
+      }
+
+      function showGame(index) {
+        if (animationCleanup) { animationCleanup(); animationCleanup = null; }
+        activeIndex = index;
+        const data = gameData[index];
+        document.getElementById('mainDisplay').classList.add('active');
+        document.getElementById('displayTitle').innerText = data.title;
+        document.getElementById('displayDesc').innerText = data.desc;
+        const slideshow = document.getElementById('slideshow');
+        slideshow.innerHTML = '';
+        const canvas = document.createElement('canvas');
+        canvas.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;';
+        slideshow.appendChild(canvas);
+        requestAnimationFrame(() => {
+          canvas.width = slideshow.offsetWidth; canvas.height = slideshow.offsetHeight;
+          if (index === 0) animationCleanup = startMissionAnim(canvas);
+          if (index === 1) animationCleanup = startPuzzleAnim(canvas);
+          if (index === 2) animationCleanup = startJeopardyAnim(canvas);
+        });
+        document.querySelectorAll('.game-tile').forEach((tile, i) => tile.classList.toggle('active', i === index));
+      }
+
+      function openGame() {
+        const modal = document.getElementById('gameModal');
+        const content = document.getElementById('modalContent');
+        const container = document.getElementById('gameContainer');
+        container.innerHTML = '';
+        modal.style.display = 'flex';
+        if (activeIndex === 0) {
+          content.classList.add('game-active');
+          container.style.cssText = 'width:100%;height:100%;position:relative;';
+          const gameDiv = document.createElement('div');
+          gameDiv.style.cssText = 'width:100%;height:100%;';
+          container.appendChild(gameDiv);
+          setTimeout(() => { gdRoot = window.mountGalacticDefense(gameDiv, closeGame); }, 50);
+        } else if (activeIndex === 1) {
+          content.classList.remove('game-active');
+          container.innerHTML = `
+            <h2 style="margin-bottom:20px;">COSMIC MINI CROSSWORD</h2>
+            <div class="crossword-container">
+              <div class="crossword-grid">
+                ${Array(25).fill(0).map((_, i) => [4, 9, 14, 19, 24].includes(i) ? '<div class="black-cell"></div>' : '<input class="crossword-cell" maxlength="1">').join('')}
+              </div>
+              <div class="clues">
+                <p><strong>ACROSS</strong></p><p>1. Our local star</p><p>2. The Red Planet</p><p>3. Path around a planet</p><p>4. Earth's satellite</p><br>
+                <p><strong>DOWN</strong></p><p>1. Opposite of West</p><p>2. Space agency</p><p>3. Not a planet anymore (Pluto)</p>
+              </div>
+            </div>`;
+        } else if (activeIndex === 2) {
+          content.classList.remove('game-active');
+          const categories = ['PLANETS', 'STARS', 'MOONS', 'HISTORY', 'GALAXIES', 'PHYSICS'];
+          const values = [100, 200, 300, 400, 500, 600];
+          let gridHTML = '<div class="jeopardy-grid">';
+          categories.forEach((cat) => (gridHTML += `<div class="j-header">${cat}</div>`));
+          values.forEach((val) => { categories.forEach((cat) => { gridHTML += `<div class="j-card" onclick="alert('${cat} for ${val}')">$${val}</div>`; }); });
+          gridHTML += '</div>';
+          container.innerHTML = `<h2>SPACE JEOPARDY</h2>${gridHTML}`;
+        }
+      }
+
+      let gdRoot = null;
+
+      function closeGame() {
+        document.getElementById('gameModal').style.display = 'none';
+        document.getElementById('modalContent').classList.remove('game-active');
+        if (gdRoot) { gdRoot.unmount(); gdRoot = null; }
+        document.getElementById('gameContainer').innerHTML = '';
+      }
+
+      showGame(0);
+    </script>
+
+    <script>
+      const starfield = document.getElementById('starfield');
+      const starCtx = starfield.getContext('2d');
+      let sfWidth, sfHeight, sfStars = [];
+      const STAR_COUNT = 800;
+      function sfInit() {
+        sfWidth = window.innerWidth; sfHeight = window.innerHeight;
+        starfield.width = sfWidth; starfield.height = sfHeight;
+        sfStars = [];
+        for (let i = 0; i < STAR_COUNT; i++) {
+          sfStars.push({ x: Math.random() * sfWidth - sfWidth / 2, y: Math.random() * sfHeight - sfHeight / 2, z: Math.random() * sfWidth });
+        }
+      }
+      function sfDraw() {
+        starCtx.fillStyle = '#000000'; starCtx.fillRect(0, 0, sfWidth, sfHeight);
+        for (let i = 0; i < STAR_COUNT; i++) {
+          let s = sfStars[i]; s.z -= 1.5;
+          if (s.z <= 0) { s.z = sfWidth; s.x = Math.random() * sfWidth - sfWidth / 2; s.y = Math.random() * sfHeight - sfHeight / 2; }
+          const px = (s.x / s.z) * sfWidth + sfWidth / 2, py = (s.y / s.z) * sfHeight + sfHeight / 2;
+          const size = (1 - s.z / sfWidth) * 3, opacity = 1 - s.z / sfWidth;
+          starCtx.fillStyle = `rgba(255,255,255,${opacity})`; starCtx.beginPath(); starCtx.arc(px, py, size, 0, Math.PI * 2); starCtx.fill();
+        }
+        requestAnimationFrame(sfDraw);
+      }
+      window.addEventListener('resize', sfInit);
+      sfInit(); sfDraw();
+    </script>
+  </body>
 </html>

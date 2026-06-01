@@ -1,1 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Earth - Activities</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      async
+      type="module"
+      src="https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js"
+    ></script>
+    <zapier-interfaces-chatbot-embed
+      is-popup="true"
+      chatbot-id="cmm53hwox0025k1ttzfc6dtm7"
+    ></zapier-interfaces-chatbot-embed>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+      /* Base Setup - Matched to Mission Templates */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #000;
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+        font-family: 'Syncopate', sans-serif;
+        transition: background-color 0.4s, color 0.4s;
+      }
+
+      #starfield {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+      }
+
+      .global-nav {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        width: 100%;
+        padding: 30px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .back-link {
+        color: white;
+        text-decoration: none;
+        font-size: 11px;
+        letter-spacing: 2px;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 10px 20px;
+        border-radius: 50px;
+        transition: 0.3s;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+      }
+
+      .back-link:hover {
+        background: white;
+        color: black;
+        border-color: white;
+      }
+
+      .container {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 100px 20px 40px 20px;
+      }
+
+      h1 {
+        text-transform: uppercase;
+        letter-spacing: 5px;
+        margin-bottom: 20px;
+        font-size: 28px;
+      }
+      p,
+      .tile,
+      .q-opt,
+      .article-body {
+        font-family: 'Inter', sans-serif;
+      }
+
+      .section {
+        display: none;
+        width: 100%;
+        max-width: 900px;
+        text-align: center;
+      }
+      .section.active {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: fadeIn 0.6s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(15px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .video-box {
+        width: 100%;
+        max-width: 800px;
+        aspect-ratio: 16/9;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 24px;
+        margin-bottom: 30px;
+        overflow: hidden; /* This keeps the video corners rounded */
+        background: #000;
+        z-index: 10;
+        position: relative;
+      }
+      .video-box:hover {
+        border-color: #00f2ff;
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .play-btn {
+        width: 80px;
+        height: 80px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 30px rgba(0, 242, 255, 0.4);
+      }
+      .play-btn::after {
+        content: '';
+        border-style: solid;
+        border-width: 10px 0 10px 18px;
+        border-color: transparent transparent transparent black;
+        margin-left: 5px;
+      }
+
+      #rocket-overlay {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        z-index: 200;
+        background: rgba(0, 0, 0, 0.95);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: left 0.8s cubic-bezier(0.7, 0, 0.3, 1);
+      }
+      #rocket-overlay.launch {
+        left: 0;
+      }
+      #rocket-img {
+        width: 120px;
+        transform: rotate(90deg);
+        filter: drop-shadow(0 0 20px #00f2ff);
+      }
+
+      .article-body {
+        font-size: 16px;
+        line-height: 1.8;
+        text-align: left;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 45px;
+        border-radius: 24px;
+        border: 1px solid #222;
+        max-height: 65vh;
+        overflow-y: auto;
+        position: relative; /* Added for absolute positioning of download btn */
+      }
+      .article-body h3 {
+        font-family: 'Syncopate';
+        font-size: 13px;
+        margin-top: 30px;
+        color: #00f2ff;
+        letter-spacing: 2px;
+      }
+      .article-body p {
+        margin-top: 12px;
+        color: #ddd;
+      }
+      
+      .download-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: transparent;
+        color: #00f2ff;
+        border: 1px solid #00f2ff;
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-size: 10px;
+        cursor: pointer;
+        font-family: 'Syncopate', sans-serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: 0.3s;
+      }
+      .download-btn:hover {
+        background: #00f2ff;
+        color: black;
+      }
+
+      .grid-4x4 {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 15px;
+        width: 100%;
+        margin: 25px auto;
+      }
+      .tile {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid #333;
+        padding: 15px;
+        border-radius: 15px;
+        cursor: pointer;
+        font-size: 13px;
+        min-height: 110px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+        text-align: center;
+        font-weight: 500;
+      }
+      .tile:hover {
+        border-color: #888;
+        background: rgba(255, 255, 255, 0.08);
+      }
+      .tile.selected {
+        border-color: #00f2ff;
+        background: rgba(0, 242, 255, 0.15);
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+      }
+      .tile.matched {
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(0.8);
+        visibility: hidden;
+      }
+
+      .quiz-card {
+        background: #080808;
+        padding: 40px;
+        border-radius: 24px;
+        width: 100%;
+        text-align: left;
+        border: 1px solid #1a1a1a;
+      }
+      .q-opt {
+        width: 100%;
+        padding: 18px;
+        margin: 10px 0;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid #222;
+        color: white;
+        border-radius: 12px;
+        cursor: pointer;
+        text-align: left;
+        transition: 0.2s;
+        font-size: 15px;
+      }
+      .q-opt:hover {
+        background: #fff;
+        color: #000;
+        font-weight: 700;
+      }
+
+      .activity-nav {
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        justify-content: space-between;
+        padding: 40px 0;
+        z-index: 100;
+      }
+      .nav-btn {
+        background: transparent;
+        color: white;
+        border: 1.5px solid white;
+        padding: 14px 35px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-size: 11px;
+        font-family: 'Syncopate', sans-serif;
+        transition: 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+      }
+      .nav-btn:hover:not(:disabled) {
+        background: white;
+        color: black;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      }
+      .nav-btn:disabled {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* --- THEME SWITCH STYLES (Top Right, Glass) --- */
+      .theme-switch-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        z-index: 101;
+      }
+
+      .theme-label {
+        font-family: 'Syncopate', sans-serif;
+        font-size: 10px;
+        color: white;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        opacity: 0.7;
+        transition: color 0.4s;
+      }
+
+      .theme-switch {
+        display: inline-block;
+        height: 24px;
+        position: relative;
+        width: 50px;
+      }
+
+      .theme-switch input {
+        display: none;
+      }
+
+      .slider {
+        background-color: rgba(255, 255, 255, 0.05);
+        bottom: 0;
+        cursor: pointer;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition: 0.4s;
+        border-radius: 34px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      .slider:before {
+        background-color: white;
+        bottom: 3px;
+        content: "";
+        height: 16px;
+        left: 4px;
+        position: absolute;
+        transition: 0.4s;
+        width: 16px;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      }
+
+      input:checked + .slider {
+        background-color: rgba(0, 0, 0, 0.1);
+        border-color: rgba(255, 255, 255, 0.1);
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(24px);
+        background-color: white;
+      }
+
+      /* --- LIGHT THEME OVERRIDES --- */
+      body.light-theme {
+        background-color: #fff;
+        color: #000;
+      }
+
+      body.light-theme #starfield {
+        display: none;
+      }
+
+      body.light-theme .back-link {
+        background: rgba(255, 255, 255, 0.8);
+        color: #000;
+        border-color: rgba(0, 0, 0, 0.2);
+      }
+
+      body.light-theme .back-link:hover {
+        background: #000;
+        color: #fff;
+      }
+
+      body.light-theme .article-body {
+        background: rgba(0, 0, 0, 0.03);
+        border: 1px solid #eee;
+        color: #333;
+      }
+
+      body.light-theme .article-body h3 {
+        color: #005f66;
+      }
+      
+      body.light-theme .download-btn {
+        color: #005f66;
+        border-color: #005f66;
+      }
+      body.light-theme .download-btn:hover {
+        background: #005f66;
+        color: white;
+      }
+
+      body.light-theme .tile {
+        background: rgba(0, 0, 0, 0.05);
+        border: 1px solid #ddd;
+        color: #000;
+      }
+
+      body.light-theme .quiz-card {
+        background: #f9f9f9;
+        border-color: #eee;
+      }
+
+      body.light-theme .q-opt {
+        background: rgba(0, 0, 0, 0.02);
+        border: 1px solid #ddd;
+        color: #000;
+      }
+
+      body.light-theme .q-opt:hover {
+        background: #000;
+        color: #fff;
+      }
+
+      body.light-theme .nav-btn {
+        border-color: #000;
+        color: #000;
+      }
+
+      body.light-theme .nav-btn:hover {
+        background: #000;
+        color: #fff;
+      }
+
+      body.light-theme .theme-label {
+        color: black;
+      }
+
+      body.light-theme .slider {
+        background-color: rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      body.light-theme .slider:before {
+        background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="starfield"></canvas>
+
+    <div id="rocket-overlay">
+      <svg
+        id="rocket-img"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M12 2L4.5 20.29L5.21 21L12 18L18.79 21L19.5 20.29L12 2Z"
+          fill="#00f2ff"
+        />
+      </svg>
+    </div>
+
+    <nav class="global-nav">
+      <a href="../activities.html" class="back-link">← EXIT TO MISSIONS</a>
+      
+      <div class="theme-switch-wrapper">
+        <span class="theme-label">Switch to Dark/Light Theme</span>
+        <label class="theme-switch" for="checkbox">
+          <input type="checkbox" id="checkbox" />
+          <div class="slider"></div>
+        </label>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="section active" id="sec1">
+        <div class="video-box">
+          <iframe
+            width="100%"
+            height="100%"
+            src="https://www.youtube.com/embed/BsoJqwGiAmk?si=qMYc9RMBqNaRog1s"
+            title="YouTube video player"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerpolicy="strict-origin-when-cross-origin"
+            allowfullscreen
+          ></iframe>
+        </div>
+        <h1>Earth</h1>
+        <p style="color: #888; font-size: 14px; letter-spacing: 1px">
+          Module 03
+        </p>
+      </div>
+
+      <div class="section" id="sec2">
+        <h1>Earth Information</h1>
+        <div class="article-body" id="article-content">
+          <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
+          
+          <h3>1. About the Earth</h3>
+          <p>
+            Earth is the third planet from the Sun, about 4.5 billion years old,
+            and the only place we know of so far that actually supports life,
+            sitting in that “just right” zone scientists call the habitable
+            zone; it’s got layers like an onion — a solid inner core, a molten
+            outer core that helps generate our magnetic field, a thick mantle,
+            and a crust broken into tectonic plates that slowly drift around,
+            causing earthquakes, volcanoes, and the formation of mountains — and
+            about 71% of its surface is covered in water, mostly in vast oceans
+            like the Pacific, Atlantic, Indian, Southern, and Arctic, which
+            regulate climate and support crazy amounts of biodiversity; the
+            atmosphere is mostly nitrogen and oxygen, with trace gases like
+            carbon dioxide that help trap heat through the greenhouse effect,
+            keeping the planet warm enough for life but also playing a big role
+            in climate change when concentrations rise too much; life itself
+            ranges from microscopic bacteria to massive blue whales, from fungi
+            underground to forests like the Amazon, all connected through
+            ecosystems and food webs; humans, one of millions of species, have
+            built civilizations, cities, cultures, languages, technologies, and
+            global networks, studying the planet through geology, biology,
+            chemistry, physics, and environmental science, even launching
+            satellites to observe it from space; Earth spins once every 24 hours
+            to give us day and night, tilts on its axis to create seasons, and
+            orbits the Sun once every 365 days, while its single natural
+            satellite, the Moon, influences tides and stabilizes the planet’s
+            wobble; it’s constantly changing through natural processes like
+            erosion, evolution, and climate cycles, but also through human
+            activity like deforestation, industrialization, and conservation
+            efforts — basically, Earth is this insanely complex, interconnected
+            system of rock, water, air, and life, all swirling through space
+            together, and somehow it’s both just a tiny speck in the universe
+            and the entire world to us at the same time.
+          </p>
+        </div>
+      </div>
+
+      <div class="section" id="sec3">
+        <h1>System Correlation</h1>
+        <p style="margin-bottom: 20px; color: #888">
+          Synchronize the Earth system parameters.
+        </p>
+        <div class="grid-4x4" id="game-grid"></div>
+      </div>
+
+      <div class="section" id="sec4">
+        <div id="quiz-container">
+          <p
+            id="q-count"
+            style="
+              color: #555;
+              font-size: 11px;
+              margin-bottom: 12px;
+              letter-spacing: 1px;
+            "
+          ></p>
+          <h2
+            id="q-text"
+            style="font-size: 20px; text-transform: none; letter-spacing: 1px"
+          ></h2>
+          <div id="q-opts"></div>
+        </div>
+        <div id="quiz-finish" style="display: none; text-align: center">
+          <h1 id="final-score" style="font-size: 80px; margin-bottom: 10px">
+            0%
+          </h1>
+          <p id="result-text" style="margin-bottom: 40px; color: #aaa"></p>
+          <div id="quiz-actions"></div>
+        </div>
+      </div>
+
+      <div class="activity-nav">
+        <button class="nav-btn" id="global-prev" onclick="movePrev()" disabled>
+          Back
+        </button>
+        <button class="nav-btn" id="global-next" onclick="moveNextWithAnim()">
+          Article
+        </button>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js';
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js';
+
+      const firebaseConfig = {
+        apiKey: 'AIzaSyCl8wecK3hMID2yamyKfI2sDXE6LjMkDm4',
+        authDomain: 'neurolearn-dbf7b.firebaseapp.com',
+        projectId: 'neurolearn-dbf7b',
+        storageBucket: 'neurolearn-dbf7b.appspot.com',
+        messagingSenderId: '746504792706',
+        appId: '1:746504792706:web:0ffe714b05fc0bbf37a29b',
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      // --- THEME TOGGLE LOGIC ---
+      const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+      const currentTheme = localStorage.getItem('theme');
+
+      if (currentTheme) {
+        document.body.classList.add(currentTheme);
+        if (currentTheme === 'light-theme') {
+          toggleSwitch.checked = true;
+        }
+      }
+
+      function switchTheme(e) {
+        if (e.target.checked) {
+          document.body.classList.add('light-theme');
+          localStorage.setItem('theme', 'light-theme');
+        } else {
+          document.body.classList.remove('light-theme');
+          localStorage.setItem('theme', 'dark-theme');
+        }
+      }
+
+      toggleSwitch.addEventListener('change', switchTheme, false);
+
+      // Navigation Logic
+      let currentStep = 1;
+      const stepNames = [
+        '',
+        'Briefing',
+        'Biosphere',
+        'Memory Tiles',
+        'Final Quiz',
+      ];
+
+      window.moveNextWithAnim = () => {
+        const overlay = document.getElementById('rocket-overlay');
+        overlay.classList.add('launch');
+        setTimeout(() => {
+          if (currentStep < 4) {
+            currentStep++;
+            updateUI();
+          }
+          setTimeout(() => overlay.classList.remove('launch'), 400);
+        }, 800);
+      };
+
+      window.movePrev = () => {
+        if (currentStep > 1) {
+          currentStep--;
+          updateUI();
+        }
+      };
+
+      function updateUI() {
+        document
+          .querySelectorAll('.section')
+          .forEach((s) => s.classList.remove('active'));
+        document.getElementById(`sec${currentStep}`).classList.add('active');
+        if (currentStep === 3) initGame();
+        if (currentStep === 4) initQuiz();
+
+        document.getElementById('global-prev').disabled = currentStep === 1;
+        document.getElementById('global-next').style.display =
+          currentStep === 4 ? 'none' : 'block';
+        document.getElementById('global-next').innerText =
+          stepNames[currentStep + 1];
+      }
+
+      // Earth Memory Game Items
+      const items = [
+        { id: 1, v: '71%' },
+        { id: 1, v: 'Surface Water' },
+        { id: 2, v: 'Nitrogen' },
+        { id: 2, v: 'Primary Gas' },
+        { id: 3, v: 'Ozone Layer' },
+        { id: 3, v: 'UV Shield' },
+        { id: 4, v: '365.25 Days' },
+        { id: 4, v: 'Orbit Period' },
+        { id: 5, v: 'Outer Core' },
+        { id: 5, v: 'Magnetic Field' },
+        { id: 6, v: '23.5°' },
+        { id: 6, v: 'Axial Tilt' },
+        { id: 7, v: 'Tectonics' },
+        { id: 7, v: 'Crustal Plates' },
+        { id: 8, v: 'Troposphere' },
+        { id: 8, v: 'Weather Layer' },
+      ];
+
+      let firstChoice = null;
+      function initGame() {
+        const grid = document.getElementById('game-grid');
+        if (grid.children.length > 0) return;
+        [...items]
+          .sort(() => Math.random() - 0.5)
+          .forEach((item) => {
+            const div = document.createElement('div');
+            div.className = 'tile';
+            div.innerText = item.v;
+            div.onclick = () => {
+              if (
+                div.classList.contains('matched') ||
+                div === firstChoice?.el
+              )
+                return;
+              div.classList.add('selected');
+              if (!firstChoice) {
+                firstChoice = { el: div, item };
+              } else {
+                if (firstChoice.item.id === item.id) {
+                  div.classList.add('matched');
+                  firstChoice.el.classList.add('matched');
+                  div.style.visibility = 'hidden';
+                  firstChoice.el.style.visibility = 'hidden';
+                  firstChoice = null;
+                } else {
+                  const prev = firstChoice.el;
+                  setTimeout(() => {
+                    div.classList.remove('selected');
+                    prev.classList.remove('selected');
+                  }, 400);
+                  firstChoice = null;
+                }
+              }
+            };
+            grid.appendChild(div);
+          });
+      }
+
+      // Earth Quiz Data
+      const quizData = [
+        {
+          q: "What percentage of Earth's surface is covered by water?",
+          a: ['50%', '71%', '90%', '25%'],
+          c: 1,
+        },
+        {
+          q: "Which gas makes up 78% of Earth's atmosphere?",
+          a: ['Oxygen', 'Nitrogen', 'Carbon Dioxide', 'Argon'],
+          c: 1,
+        },
+        {
+          q: 'What protects Earth from harmful solar radiation?',
+          a: ['The Moon', 'Ozone Layer', 'Asteroid Belt', 'Clouds'],
+          c: 1,
+        },
+        {
+          q: 'The powerful magnetosphere is generated by which layer?',
+          a: ['Crust', 'Mantle', 'Outer Core', 'Atmosphere'],
+          c: 2,
+        },
+        {
+          q: "What regulates Earth's long-term temperature by recycling carbon?",
+          a: ['Ocean Currents', 'Tectonic Plates', 'Rainfall', 'Wind'],
+          c: 1,
+        },
+        {
+          q: 'Earth is the ____ planet from the Sun.',
+          a: ['2nd', '3rd', '4th', '5th'],
+          c: 1,
+        },
+        {
+          q: 'How long does it take Earth to complete one rotation (day)?',
+          a: ['12 Hours', '24 Hours', '88 Days', '1 Month'],
+          c: 1,
+        },
+        {
+          q: 'Earth is unique because it contains water in which state?',
+          a: ['Solid', 'Liquid', 'Gas', 'All Three'],
+          c: 3,
+        },
+        {
+          q: 'The weather occurs primarily in which atmospheric layer?',
+          a: ['Exosphere', 'Stratosphere', 'Troposphere', 'Mesosphere'],
+          c: 2,
+        },
+        {
+          q: "Earth's axial tilt of 23.5° is responsible for:",
+          a: ['Tides', 'Seasons', 'Day/Night', 'Gravity'],
+          c: 1,
+        },
+      ];
+      let qIdx = 0,
+        score = 0;
+
+      function initQuiz() {
+        const q = quizData[qIdx];
+        document.getElementById('q-count').innerText = `STEP ${
+          qIdx + 1
+        } OF 10`;
+        document.getElementById('q-text').innerText = q.q;
+        const box = document.getElementById('q-opts');
+        box.innerHTML = '';
+        q.a.forEach((opt, i) => {
+          const b = document.createElement('button');
+          b.className = 'q-opt';
+          b.innerText = opt;
+          b.onclick = () => {
+            if (i === q.c) score++;
+            qIdx++;
+            if (qIdx < 10) initQuiz();
+            else finish();
+          };
+          box.appendChild(b);
+        });
+      }
+
+      function finish() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const f = document.getElementById('quiz-finish');
+        f.style.display = 'block';
+        const actions = document.getElementById('quiz-actions');
+        actions.innerHTML = '';
+
+        const p = (score / 10) * 100;
+        const sEl = document.getElementById('final-score');
+        sEl.innerText = p + '%';
+        sEl.style.color = p >= 70 ? '#00f2ff' : '#ff4b4b';
+
+        const user = auth.currentUser;
+        if (p >= 70) {
+          if (user) {
+            localStorage.setItem(`${user.uid}_earthCompleted`, 'true');
+          }
+          document.getElementById('result-text').innerText =
+            'Earth Sector Secured. Home Base Authenticated.';
+          const btn = document.createElement('button');
+          btn.className = 'nav-btn';
+          btn.innerText = 'Complete Lesson';
+          btn.onclick = () => (window.location.href = '../activities.html');
+          actions.appendChild(btn);
+        } else {
+          document.getElementById('result-text').innerText =
+            'FAIL: Minimum 7/10 required to pass mission briefing.';
+          const btn = document.createElement('button');
+          btn.className = 'nav-btn';
+          btn.innerText = 'Reboot Quiz';
+          btn.onclick = () => {
+            qIdx = 0;
+            score = 0;
+            document.getElementById('quiz-container').style.display = 'block';
+            f.style.display = 'none';
+            initQuiz();
+          };
+          actions.appendChild(btn);
+        }
+      }
+
+      // Starfield Engine
+      const canvas = document.getElementById('starfield');
+      const ctx = canvas.getContext('2d');
+      let stars = [];
+      function initStars() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        stars = [];
+        for (let i = 0; i < 400; i++)
+          stars.push({
+            x: Math.random() * canvas.width - canvas.width / 2,
+            y: Math.random() * canvas.height - canvas.height / 2,
+            z: Math.random() * canvas.width,
+          });
+      }
+      function drawStars() {
+        ctx.fillStyle = '#000';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        stars.forEach((s) => {
+          s.z -= 1.5;
+          if (s.z <= 0) s.z = canvas.width;
+          const px = (s.x / s.z) * canvas.width + canvas.width / 2,
+            py = (s.y / s.z) * canvas.height + canvas.height / 2;
+          ctx.beginPath();
+          ctx.arc(px, py, (1 - s.z / canvas.width) * 2, 0, Math.PI * 2);
+          ctx.fillStyle = 'white';
+          ctx.fill();
+        });
+        requestAnimationFrame(drawStars);
+      }
+      window.addEventListener('resize', initStars);
+      initStars();
+      drawStars();
+    </script>
+    
+    <script>
+      function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Title
+        doc.setFontSize(22);
+        doc.text("Earth Information", 20, 20);
+        
+        // Content - Get text and remove the button text if it gets included
+        doc.setFontSize(12);
+        const textElement = document.querySelector("#article-content");
+        const text = textElement.innerText.replace("Download PDF", "");
+        
+        // Split text to fit width (170mm)
+        const lines = doc.splitTextToSize(text, 170);
+        
+        // Add text to PDF
+        doc.text(lines, 20, 30);
+        
+        // Download the PDF
+        doc.save("Earth_Information.pdf");
+      }
+    </script>
+  </body>
 </html>

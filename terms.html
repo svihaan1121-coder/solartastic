@@ -1,1 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NeuroLearn - Terms & Conditions</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #000000;
+        color: #ffffff;
+        font-family: sans-serif;
+        line-height: 1.6;
+      }
+
+      /* Keep nav styles here so the fetched content is styled correctly */
+    
+
+      /* --- Content --- */
+      .main-content {
+        padding: 40px 20px;
+        padding-top: 150px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        border: 1px solid #ffffff;
+        padding: 40px;
+        
+      }
+
+      h1 {
+        font-size: 32px;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+      }
+
+      h2 {
+        font-size: 20px;
+        margin-top: 30px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #ffffff;
+        padding-bottom: 5px;
+      }
+
+      p,
+      ul {
+        margin-bottom: 15px;
+      }
+
+      ul {
+        margin-left: 20px;
+      }
+
+      li {
+        margin-bottom: 5px;
+      }
+
+      .highlight {
+        border: 2px solid #ffffff;
+        padding: 20px;
+        margin: 20px 0;
+      }
+
+      hr {
+        border: 0;
+        border-top: 1px solid #ffffff;
+        margin: 30px 0;
+      }
+
+      .footer-note {
+        text-align: center;
+        font-weight: bold;
+        margin-top: 20px;
+      }
+
+      a {
+        color: #ffffff;
+      }
+
+      @media (max-width: 768px) {
+        #nav-placeholder nav {
+          flex-direction: column;
+          gap: 15px;
+        }
+        .container {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="nav-placeholder"></div>
+
+    <div class="main-content">
+      <div class="container">
+        <h1>Terms & Conditions</h1>
+        <p><strong>Last updated: December 1, 2024</strong></p>
+
+        <p>
+          Welcome to NeuroLearn. By using our website, you agree to the terms
+          listed below. If you don't agree, do not use the site.
+        </p>
+
+        <h2>1. Use of Our Website</h2>
+        <ul>
+          <li>Use the site responsibly and legally.</li>
+          <li>Do not attempt to hack or disrupt the systems.</li>
+          <li>No automated scraping without permission.</li>
+        </ul>
+
+        <h2>3. Intellectual Property</h2>
+        <p>
+          All content is owned by Solartastic. You may use it for personal
+          study, but you may not copy, sell, or redistribute materials without
+          written consent.
+        </p>
+
+        <h2>4. Accounts</h2>
+        <p>
+          You are responsible for keeping your login information secure and for
+          all activity that occurs under your account.
+        </p>
+
+        <div class="footer-note">
+          <hr />
+          <p>By using this platform, you agree to these Terms & Conditions.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+      // Fetch and inject navigation
+      fetch('nav.html')
+        .then((response) => {
+          if (!response.ok) throw new Error('Nav not found');
+          return response.text();
+        })
+        .then((data) => {
+          document.getElementById('nav-placeholder').innerHTML = data;
+        })
+        .catch((err) => console.error('Error loading navigation:', err));
+
+
+        fetch('footer.html').then(res => res.text()).then(data => document.getElementById('footer-placeholder').innerHTML = data);
+    </script>
+  </body>
 </html>

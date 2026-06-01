@@ -1,1 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solartastic - Live Sessions</title>
+    <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
+    <zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmm53hwox0025k1ttzfc6dtm7'></zapier-interfaces-chatbot-embed>
+
+    <style>
+        /* 1. RESET & BASE */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: #000;
+            color: white;
+            font-family: 'Syncopate', sans-serif;
+            /* Allow vertical scrolling but hide horizontal */
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+        /* 2. NAVIGATION - Exactly as original */
+        #nav-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        /* 3. SVG RINGS - Exactly as original */
+        .visual-container {
+            position: absolute;
+            bottom: 0; /* Changed to 0 relative to the 100vh height */
+            left: -400px;
+            width: 1200px;
+            height: 1200px;
+            z-index: 5;
+            pointer-events: none;
+            /* Ensures it stays within the first fold */
+            transform: translateY(400px); 
+        }
+
+        .ring-path {
+            fill: none;
+            stroke: rgba(58, 90, 120, 1);
+            stroke-width: 1.5;
+            stroke-dasharray: 4100;
+            stroke-dashoffset: 4100;
+            animation: drawRings 2.5s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+            z-index: 3;
+        }
+
+        .ring-path:nth-child(2) { animation-delay: 0.1s; }
+        .ring-path:nth-child(3) { animation-delay: 0.2s; }
+        .ring-path:nth-child(4) { animation-delay: 0.3s; }
+        .ring-path:nth-child(5) { animation-delay: 0.4s; }
+        .ring-path:nth-child(6) { animation-delay: 0.5s; }
+        .ring-path:nth-child(7) { animation-delay: 0.6s; }
+        .ring-path:nth-child(8) { animation-delay: 0.7s; }
+
+        @keyframes drawRings { to { stroke-dashoffset: 0; } }
+
+        .curved-text-svg {
+            fill: white;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 62px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            transform: rotate(15deg); 
+            transform-origin: 300px 900px; 
+            opacity: 0;
+            animation: fadeInText 1s ease forwards;
+            animation-delay: 1.2s;
+        }
+
+        @keyframes fadeInText { to { opacity: 1; } }
+
+        /* 4. MAIN CONTENT - Exactly as original */
+        .main-content {
+            margin-top: 100px; 
+            position: absolute; /* Kept absolute so layout doesn't break */
+            top: 0;
+            right: 0;
+            z-index: 10;
+            height: calc(100vh - 100px);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end; 
+            align-items: flex-end;
+            padding-right: 100px;
+            padding-bottom: 80px; 
+            text-align: right;
+            width: 100%;
+        }
+
+        .hero-description {
+            transform: translateY(-50px);
+            max-width: 480px;
+            font-family: sans-serif;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            opacity: 0;
+            text-transform: uppercase;
+            animation: fadeInUp 1s ease forwards;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 0.8; transform: translateY(-50px); }
+            from { opacity: 0; transform: translateY(-30px); }
+        }
+
+        /* 5. REVIEW SLIDESHOW BOX - Exactly as original */
+        .review-box {
+            width: 550px;
+            background: white;
+            border-radius: 40px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            color: #3a5a78;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+            animation-delay: 2s;
+        }
+
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        .review-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: #6a89a7;
+            flex-shrink: 0;
+            box-shadow: inset -10px -10px 25px rgba(0,0,0,0.2);
+            transition: background 0.8s ease;
+            /* Added text centering for initials */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .review-content { text-align: left; }
+        .review-name { font-weight: 800; font-size: 19px; margin-bottom: 8px; text-transform: uppercase; }
+        .review-text { font-family: sans-serif; font-size: 14px; opacity: 0.8; font-style: italic; line-height: 1.5; }
+
+        /* 6. LAYOUT FIX: SPACER AND CALENDAR */
+        .first-fold {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+        }
+
+        .calendar-section {
+            background: black; 
+           padding-left: 30px;
+           padding-right: 30px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 7. MEET THE TUTORS SECTION */
+        .tutors-section {
+            padding: 100px 5vw;
+            background: black;
+            color: white;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            margin-bottom: 80px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        /* Tutor Card "Box" Styling */
+        .tutor-card {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            margin-bottom: 60px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            /* Added Box Styles */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.02);
+            /* Initial state for JS animation */
+            opacity: 0;
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Classes to be added by JS on scroll */
+        .tutor-card.animate-left {
+            animation: fadeInLeft 1s ease forwards;
+        }
+        .tutor-card.animate-right {
+            animation: fadeInRight 1s ease forwards;
+        }
+
+        /* Adjusting sides for odd/even */
+        .tutor-card:nth-of-type(even) {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        /* Tutor Image Container */
+        .tutor-image-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            border: 3px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            overflow: hidden; /* Ensures image fits circle */
+        }
+        
+        .tutor-image-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Keeps aspect ratio */
+        }
+
+        .tutor-content h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .tutor-content p {
+            font-family: sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+
+        .tutor-contact {
+            color: white;
+            text-decoration: none;
+            font-family: 'Syncopate', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            border: 1px solid white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: 0.3s;
+            display: inline-block;
+        }
+
+        .tutor-contact:hover {
+            background: white;
+            color: black;
+        }
+        
+
+        #footer-placeholder { position: relative; width: 100%; z-index: 100; }
+    </style>
+</head>
+<body>
+
+    <div class="first-fold">
+        <div id="nav-placeholder"></div>
+
+        <div class="visual-container">
+            <svg viewBox="0 0 1200 1200" width="1200" height="1200">
+                <path id="huggingPath" d="M 220,230 A 650,650 0 0,1 950,1000" fill="none" />
+                <circle class="ring-path" cx="300" cy="900" r="350" />
+                <circle class="ring-path" cx="300" cy="900" r="400" />
+                <circle class="ring-path" cx="300" cy="900" r="450" />
+                <circle class="ring-path" cx="300" cy="900" r="500" />
+                <circle class="ring-path" cx="300" cy="900" r="550" />
+                <circle class="ring-path" cx="300" cy="900" r="600" />
+                <circle class="ring-path" cx="300" cy="900" r="650" />
+                <text class="curved-text-svg">
+                    <textPath href="#huggingPath" startOffset="10%">LIVE SESSIONS</textPath>
+                </text>
+            </svg>
+        </div>
+
+        <div class="main-content">
+            <p class="hero-description">
+                Take one on one tutoring lessons with experienced astronomers for extra help, 
+                or learn with your peers in group study sessions. The choice is yours!
+            </p>
+
+            <div class="review-box" id="reviewBox">
+                <div class="review-avatar" id="revAvatar">EM</div>
+                <div class="review-content">
+                    <div class="review-name" id="revName">Emma Martinez</div>
+                    <p class="review-text" id="revText">"The one-on-one sessions completely transformed my understanding of planetary physics!"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="calendar-section">
+        <div class= "cal" data-tockify-component="calendar" data-tockify-calendar="solartastic"></div>
+    </div>
+
+    <div class="tutors-section">
+        <h2 class="section-title">MEET THE TUTORS</h2>
+        
+        <div class="tutor-card">
+            <div class="tutor-image-circle">
+                <img src="https://www.appam.org/assets/1/6/mainfckeditordimension/can_chen.jpg" alt="Dr. Michael Zheng">
+            </div>
+            <div class="tutor-content">
+                <h3>DR. MICHAEL ZHENG</h3>
+                <p>Specializing in Stellar Evolution and Galaxy Formation. Dr. Zheng brings over 15 years of research experience to help simplify complex astrophysical concepts for students of all levels. Contact for private sessions.</p>
+                <a href="mailto:zheng@solartastic.com" class="tutor-contact">CONTACT DR. ZHENG</a>
+            </div>
+        </div>
+
+        <div class="tutor-card">
+            <div class="tutor-image-circle">
+                <img src="https://img.freepik.com/free-photo/confident-pretty-business-woman-with-arms-crossed_1262-2992.jpg" alt="Prof. Eleana Weber">
+            </div>
+            <div class="tutor-content">
+                <h3>PROF. ELEANA WEBER</h3>
+                <p>Expert in Planetary Science and Orbital Mechanics. Prof. Weber focuses on interactive group learning and practical application of physics. Reach out to join her next group workshop.</p>
+                <a href="mailto:weber@solartastic.com" class="tutor-contact">CONTACT PROF. WEBER</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script data-cfasync="false" data-tockify-script="embed" src="https://public.tockify.com/browser/embed.js"></script>
+    <script>
+        fetch('nav.html').then(res => res.text()).then(data => document.getElementById('nav-placeholder').innerHTML = data);
+        fetch('footer.html').then(res => res.text()).then(data => document.getElementById('footer-placeholder').innerHTML = data);
+
+        const reviews = [
+            { name: "Emma Martinez", initials: "EM", text: '"The one-on-one sessions completely transformed my understanding!"', color: "#6a89a7" },
+            { name: "James Lee", initials: "JL", text: '"Learning alongside peers made complex imaging click."', color: "#5a3a78" },
+            { name: "Sofia Patel", initials: "SP", text: '"The flexibility of these study groups is amazing!"', color: "#a78b6a" }
+        ];
+
+        let currentRev = 0;
+        function rotateReview() {
+            const box = document.getElementById('reviewBox');
+            if(!box) return;
+            box.style.opacity = '0';
+            setTimeout(() => {
+                currentRev = (currentRev + 1) % reviews.length;
+                document.getElementById('revName').innerText = reviews[currentRev].name;
+                document.getElementById('revText').innerText = reviews[currentRev].text;
+                document.getElementById('revAvatar').innerText = reviews[currentRev].initials;
+                document.getElementById('revAvatar').style.backgroundColor = reviews[currentRev].color;
+                box.style.opacity = '1';
+            }, 600);
+        }
+        setInterval(rotateReview, 5000);
+        // Initialize first review
+        document.getElementById('revAvatar').innerText = reviews[0].initials;
+        document.getElementById('revAvatar').style.backgroundColor = reviews[0].color;
+
+        // --- INTERSECTION OBSERVER FOR SCROLL ANIMATIONS ---
+        const observerOptions = {
+            root: null, // use the viewport
+            threshold: 0.15 // trigger when 15% of the card is visible
+        };
+
+        const observerCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const card = entry.target;
+                    
+                    // Add animation class based on whether it is odd or even
+                    if (card.matches(':nth-of-type(odd)')) {
+                        card.classList.add('animate-left');
+                    } else {
+                        card.classList.add('animate-right');
+                    }
+                    
+                    // Stop observing after animating once
+                    observer.unobserve(card);
+                }
+            });
+        };
+
+        const tutorObserver = new IntersectionObserver(observerCallback, observerOptions);
+
+        // Target the cards
+        document.querySelectorAll('.tutor-card').forEach(card => {
+            tutorObserver.observe(card);
+        });
+    </script>
+</body>
 </html>

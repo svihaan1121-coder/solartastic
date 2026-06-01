@@ -1,1 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NeuroLearn - Featured Content</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #000000;
+        color: #ffffff;
+        font-family: sans-serif;
+        line-height: 1.6;
+        min-height: 100vh;
+      }
+
+
+      /* --- Main Content --- */
+      .main-content {
+        padding: 60px 20px;
+        padding-top: 150px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background-color: #000000;
+        padding: 50px;
+        border: 1px solid #ffffff;
+        text-align: center;
+      }
+
+      .image-wrapper {
+        max-width: 100%;
+        margin: 30px auto;
+        border: 1px solid #ffffff;
+        background: #000000;
+        overflow: hidden;
+      }
+
+      .image-wrapper img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      p {
+        margin-top: 20px;
+        font-size: 1.1em;
+        color: #ffffff;
+      }
+
+      @media (max-width: 768px) {
+        #nav-placeholder nav {
+          flex-direction: column;
+          gap: 15px;
+          padding: 20px;
+        }
+        .container {
+          padding: 25px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="nav-placeholder"></div>
+
+    <div class="main-content">
+      <div class="container">
+        <figure class="image-wrapper">
+          <img
+            src="https://i.ibb.co/VpxGpPr5/Screenshot-2025-11-30-at-8-23-09-PM.png"
+            alt="Featured Content"
+          />
+        </figure>
+
+        <p>
+          This image displays educators that helped us develop this website.
+          Content was used and developed on for the full functionality and usage
+          of Solartastic. We thank them for their help in ideas and content!
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Fetch the navigation file
+      fetch('nav.html')
+        .then((response) => {
+          if (!response.ok) throw new Error('Failed to load nav.');
+          return response.text();
+        })
+        .then((data) => {
+          document.getElementById('nav-placeholder').innerHTML = data;
+        })
+        .catch((error) => {
+          console.error('Error loading navigation:', error);
+        });
+    </script>
+  </body>
 </html>
