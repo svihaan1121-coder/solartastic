@@ -1,105 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NeuroLearn - Featured Content</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solartastic - Educators</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
+    <zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmm53hwox0025k1ttzfc6dtm7'></zapier-interfaces-chatbot-embed>
+
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        background-color: #000000;
-        color: #ffffff;
-        font-family: sans-serif;
-        line-height: 1.6;
-        min-height: 100vh;
-      }
-
-
-      /* --- Main Content --- */
-      .main-content {
-        padding: 60px 20px;
-        padding-top: 150px;
-      }
-
-      .container {
-        max-width: 900px;
-        margin: 0 auto;
-        background-color: #000000;
-        padding: 50px;
-        border: 1px solid #ffffff;
-        text-align: center;
-      }
-
-      .image-wrapper {
-        max-width: 100%;
-        margin: 30px auto;
-        border: 1px solid #ffffff;
-        background: #000000;
-        overflow: hidden;
-      }
-
-      .image-wrapper img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-      }
-
-      p {
-        margin-top: 20px;
-        font-size: 1.1em;
-        color: #ffffff;
-      }
-
-      @media (max-width: 768px) {
-        #nav-placeholder nav {
-          flex-direction: column;
-          gap: 15px;
-          padding: 20px;
+        /* --- CORE SETUP --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html {
+            background-color: #000000;
+            color: #ffffff;
+            font-family: 'Syncopate', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.6;
         }
-        .container {
-          padding: 25px;
+
+        .stars-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            background-image: 
+                radial-gradient(1.5px 1.5px at 20% 30%, #fff, transparent),
+                radial-gradient(1px 1px at 80% 70%, #fff, transparent);
+            background-size: 600px 600px;
+            pointer-events: none;
         }
-      }
+
+        /* --- CONTENT LAYER --- */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            padding: 160px 20px 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .hero-title {
+            font-size: clamp(30px, 6vw, 60px);
+            font-weight: 800;
+            letter-spacing: 8px;
+            margin-bottom: 50px;
+            text-align: center;
+            text-shadow: 0 0 20px rgba(0, 150, 255, 0.4);
+            text-transform: uppercase;
+        }
+
+        /* --- GLASSMORPHISM CARD --- */
+        .educators-card {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 150, 255, 0.25);
+            border-radius: 40px;
+            padding: 50px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7),
+                        0 0 30px rgba(0, 150, 255, 0.15);
+            transition: border-color 0.4s, box-shadow 0.4s;
+            text-align: center;
+        }
+
+        .educators-card:hover {
+            border-color: rgba(0, 150, 255, 0.5);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8),
+                        0 0 40px rgba(0, 150, 255, 0.25);
+        }
+
+        /* Screenshot Display Container */
+        .image-container {
+            max-width: 100%;
+            margin-bottom: 40px;
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            background: #000;
+            display: inline-block;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            opacity: 0.9;
+            transition: opacity 0.3s;
+        }
+
+        .image-container:hover img {
+            opacity: 1;
+        }
+
+        .description-text {
+            font-family: sans-serif;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.8;
+            max-width: 760px;
+            margin: 0 auto;
+            letter-spacing: 0.5px;
+        }
+
+        #nav-placeholder {
+            position: absolute;
+            top: 0; left: 0; width: 100%; z-index: 100;
+        }
+
+        #footer-placeholder {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .educators-card {
+                padding: 30px 20px;
+            }
+            .main-content {
+                padding-top: 130px;
+            }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
+    <div class="stars-bg"></div>
+
     <div id="nav-placeholder"></div>
 
     <div class="main-content">
-      <div class="container">
-        <figure class="image-wrapper">
-          <img
-            src="https://i.ibb.co/VpxGpPr5/Screenshot-2025-11-30-at-8-23-09-PM.png"
-            alt="Featured Content"
-          />
-        </figure>
+        <h1 class="hero-title">Our Educators</h1>
 
-        <p>
-          This image displays educators that helped us develop this website.
-          Content was used and developed on for the full functionality and usage
-          of Solartastic. We thank them for their help in ideas and content!
-        </p>
-      </div>
+        <div class="educators-card">
+            <div class="image-container">
+                <img src="https://i.ibb.co/VpxGpPr5/Screenshot-2025-11-30-at-8-23-09-PM.png" alt="Collaborating Educators Team Screenshot">
+            </div>
+
+            <p class="description-text">
+                This image honors the amazing educators who collaborated with us in developing and refining the curriculum of this platform. Their pedagogical expertise, creative suggestions, and valuable contributions shaped the modules, lessons, and quizzes of Solartastic. We extend our deepest gratitude to them for making space science education so engaging, beautiful, and accessible!
+            </p>
+        </div>
     </div>
 
+    <div id="nav-placeholder"></div>
+    <div id="footer-placeholder"></div>
+
     <script>
-      // Fetch the navigation file
-      fetch('nav.html')
-        .then((response) => {
-          if (!response.ok) throw new Error('Failed to load nav.');
-          return response.text();
-        })
-        .then((data) => {
-          document.getElementById('nav-placeholder').innerHTML = data;
-        })
-        .catch((error) => {
-          console.error('Error loading navigation:', error);
-        });
+        // Fetch navigation
+        fetch('nav.html')
+            .then(res => {
+                if(!res.ok) throw new Error('Nav failed to load');
+                return res.text();
+            })
+            .then(data => {
+                document.getElementById('nav-placeholder').innerHTML = data;
+            })
+            .catch(err => console.error(err));
+
+        // Fetch footer
+        fetch('footer.html')
+            .then(res => {
+                if(!res.ok) throw new Error('Footer failed to load');
+                return res.text();
+            })
+            .then(data => {
+                document.getElementById('footer-placeholder').innerHTML = data;
+            })
+            .catch(err => console.error(err));
     </script>
-  </body>
+</body>
 </html>

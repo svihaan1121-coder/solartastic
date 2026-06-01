@@ -35,7 +35,7 @@
             pointer-events: none;
         }
 
-        /* --- EXACT NAVIGATION CSS (REVERTED) --- */
+        /* --- STUNNING NAVIGATION & COSMIC DESIGN SYSTEM --- */
         nav {
             position: fixed;
             top: 0;
@@ -44,11 +44,10 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center;
-            padding: 40px 60px; /* Reduced padding slightly to accommodate search bar */
+            padding: 40px 60px;
             z-index: 9999;
             pointer-events: auto;
             box-sizing: border-box;
-            
         }
 
         .logo { 
@@ -60,16 +59,9 @@
             color: white; 
         }
 
-        .nav-center {
-            display: flex;
-            align-items: center;
-            flex-grow: 1;
-            justify-content: center;
-        }
-
         .nav-links {
             display: flex;
-            align-items: center; /* Aligns the tops of all nav items */
+            align-items: center;
         }
 
         /* STANDARD LINKS */
@@ -83,7 +75,7 @@
             border-radius: 50px; 
             transition: 0.3s ease;
             line-height: 1;
-            border: 1px solid transparent; /* Keeps sizing consistent with hover state */
+            border: 1px solid transparent;
         }
 
         .nav-links a.active { 
@@ -91,12 +83,6 @@
             color: black; 
         }
 
-        .nav-links a:hover:not(.active):not(.main-link):not(.sub-link) { 
-            border: 1px solid white; 
-            background: rgba(255,255,255,0.1); 
-        }
-
-        /* THE EXPANDING BOX (ACTIVITIES) */
         .activities-dropdown {
             margin-left: 30px;
             display: flex;
@@ -106,8 +92,6 @@
             border: 1px solid transparent;
             border-radius: 25px; 
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            
-            /* The Fix: Use max-height instead of height to let it align naturally */
             max-height: 37px; 
             overflow: hidden;
             min-width: 160px;
@@ -116,27 +100,25 @@
         .activities-dropdown:hover {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid white;
-            max-height: 150px; /* Increased to fit sub-links */
+            max-height: 80px;
         }
 
-        /* Main Activities Link */
         .activities-dropdown .main-link {
             font-family: 'Syncopate', sans-serif;
-            padding: 10px 22px; /* Matches standard link padding exactly */
+            padding: 10px 22px;
             font-size: 15px;
             text-decoration: none;
             color: white;
             width: 100%;
             text-align: center;
-            line-height: 1; /* Matches standard link line-height */
+            line-height: 1;
             display: block;
         }
 
-        /* Sub-menu Games Link */
         .activities-dropdown .sub-link {
             font-family: 'Syncopate', sans-serif;
-            padding: 10px;
-            font-size: 12px;
+            padding-bottom: 12px;
+            font-size: 10px;
             text-decoration: none;
             color: rgba(255, 255, 255, 0.6);
             width: 100%;
@@ -150,60 +132,106 @@
             color: white;
         }
 
-        /* --- SEARCH BAR CSS --- */
-        .search-wrapper {
+        /* COLLAPSIBLE SEARCH BAR STYLING */
+        .search-container {
             position: relative;
+            display: flex;
+            align-items: center;
             margin-left: 30px;
-        }
-        
-        .search-input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-family: sans-serif;
-            font-size: 12px;
-            width: 200px;
-            transition: all 0.3s;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            width: 250px;
-            background: rgba(255, 255, 255, 0.15);
-            border-color: white;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        #search-results {
+        .search-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s, transform 0.3s;
+            z-index: 10;
+        }
+
+        .search-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+
+        .search-input {
+            width: 0;
+            opacity: 0;
+            padding: 0;
+            border: 1px solid transparent;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            color: white;
+            font-family: sans-serif;
+            font-size: 12px;
+            outline: none;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease, padding 0.4s ease;
+            box-sizing: border-box;
+        }
+
+        /* Expanded State */
+        .search-container.expanded .search-input {
+            width: 220px;
+            opacity: 1;
+            padding: 10px 15px 10px 40px;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .search-container.expanded .search-btn {
+            position: absolute;
+            left: 2px;
+            pointer-events: none;
+        }
+
+        /* Search Results Dropdown */
+        .search-results-dropdown {
             position: absolute;
             top: 100%;
-            left: 0;
-            width: 100%;
-            background: rgba(0,0,0,0.9);
-            border-radius: 10px;
-            margin-top: 5px;
-            max-height: 200px;
+            right: 0;
+            width: 220px;
+            background: rgba(0, 0, 0, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            margin-top: 10px;
+            max-height: 250px;
             overflow-y: auto;
-            z-index: 1000;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(0, 150, 255, 0.1);
         }
-        
-        #search-results a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 10px;
-            font-size: 12px;
-            font-family: sans-serif;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        #search-results a:hover {
-            background: rgba(255,255,255,0.1);
-        }
-        /* --- END SEARCH BAR CSS --- */
 
-        /* --- END NAVIGATION CSS --- */
+        .search-item {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 16px;
+            font-family: sans-serif;
+            font-size: 12px;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: background 0.2s, color 0.2s;
+            text-align: left;
+        }
+
+        .search-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .no-results {
+            color: rgba(255, 255, 255, 0.4);
+            cursor: default;
+        }
 
         /* 3. VISUALS - 3D PLANET CONTAINERS */
         .planet-view {
@@ -211,13 +239,13 @@
             top: 0; left: 0; width: 100%; height: 100vh;
             display: flex; align-items: center; justify-content: center;
             z-index: 5;
-            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.75s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .planet-container {
             position: absolute;
             width: 100%; height: 100%;
-            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.75s cubic-bezier(0.16, 1, 0.3, 1);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -231,8 +259,30 @@
             background: #000 
         }
 
-        .earth-3d { z-index: 6; transform: scale(1.6); } 
-        .mars-3d { z-index: 6; right: -100%; opacity: 0; }
+        .earth-3d { z-index: 6; transform: scale(1.6); position: relative; } 
+        .mars-3d { z-index: 6; right: -100%; opacity: 0; position: relative; }
+
+        /* Glow effects behind 3D models */
+        .earth-3d::after {
+            content: '';
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, rgba(0, 210, 255, 0.2) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+            filter: blur(25px);
+        }
+        .mars-3d::after {
+            content: '';
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(255, 100, 0, 0.18) 0%, transparent 70%);
+            z-index: -1;
+            pointer-events: none;
+            filter: blur(25px);
+        }
 
         /* 4. ANIMATION STATES */
         body.stage-1 .earth-3d { transform: translateX(5vw) scale(1.9); }
@@ -248,15 +298,15 @@
             display: flex; flex-direction: column; justify-content: center;
             padding: 0 10%;
             opacity: 0;
-            transition: opacity 0.6s ease, transform 0.8s ease;
+            transition: opacity 0.35s ease, transform 0.45s ease;
             z-index: 10;
         }
 
         .hero-layer { opacity: 1; pointer-events: auto; }
-        body.stage-1 .hero-layer, body.stage-2 .hero-layer, body.stage-3 .hero-layer { opacity: 0; transform: translateY(-30px); pointer-events: none; }
-
-        .earth-detail-layer { flex-direction: row; align-items: center; justify-content: space-between; }
-        body.stage-1 .earth-detail-layer { opacity: 1; pointer-events: auto; transform: translateY(0); }
+        
+        body.stage-1 .hero-layer { opacity: 0; transform: translateY(-30px); pointer-events: none; }
+        
+        body.stage-1 .earth-detail-layer { opacity: 1; pointer-events: auto; }
         body.stage-2 .earth-detail-layer, body.stage-3 .earth-detail-layer { opacity: 0; transform: translateY(-30px); }
 
         .typewriter::after { content: '|'; animation: blink 0.7s infinite; }
@@ -268,16 +318,20 @@
         .info-box {
             max-width: 400px;
             padding: 30px;
-            border-left: 1px solid rgba(255,255,255,0.2);
-            background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+            border-left: 1.5px solid #3b82f6;
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.03) 50%, transparent 100%);
+            box-shadow: -10px 0 30px rgba(59, 130, 246, 0.05);
+            border-radius: 0 20px 20px 0;
             position: relative;
             transform: translateY(100px);
         }
         .info-box.right {
             max-width: 380px;
             border-left: none;
-            border-right: 1px solid rgba(255,255,255,0.2);
-            background: linear-gradient(-90deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+            border-right: 1.5px solid #8b5cf6;
+            background: linear-gradient(-90deg, rgba(139, 92, 246, 0.08) 0%, rgba(59, 130, 246, 0.03) 50%, transparent 100%);
+            box-shadow: 10px 0 30px rgba(139, 92, 246, 0.05);
+            border-radius: 20px 0 0 20px;
             text-align: right;
             transform: translateY(-100px);
         }
@@ -305,12 +359,65 @@
             margin-bottom: 10px;
         }
 
+        /* --- SIGN UP SECTION TWO-COLUMN LAYOUT --- */
         body.stage-3 .auth-layer { 
             opacity: 1; 
-            pointer-events: auto; 
+            pointer-events: auto;
+        }
+
+        .auth-layer {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 50px;
+        }
+
+        .index-signup-left {
+            flex: 1.2;
+            display: flex;
+            justify-content: center;
+            pointer-events: auto;
+        }
+
+        .index-signup-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            padding: 0;
-            padding-bottom: 100px; 
+            text-align: center;
+        }
+
+        .signup-title-right {
+            font-size: clamp(24px, 3.5vw, 42px);
+            font-weight: 800;
+            letter-spacing: 2px;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(0, 150, 255, 0.4);
+            text-transform: uppercase;
+        }
+
+        .lottie-person-container {
+            width: 180px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .astronaut-placeholder {
+            display: inline-block;
+            animation: floatAstronaut 5s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.35));
+        }
+
+        @keyframes floatAstronaut {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(4deg); }
         }
 
         .auth-card { 
@@ -319,6 +426,12 @@
             padding: 50px 40px; border-radius: 40px; 
             border: 1px solid rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(20px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 30px rgba(0, 210, 255, 0.15);
+            transition: border-color 0.3s;
+        }
+
+        .auth-card:hover {
+            border-color: rgba(0, 210, 255, 0.4);
         }
 
         .stats-grid {
@@ -337,9 +450,10 @@
         }
         .hero-btn:hover { background: white; color: black; }
 
-        .signup-link {
-            display: inline-block; margin-top: 25px; color: #fff; font-weight: 800;
-            text-decoration: none; border-bottom: 2px solid white; padding-bottom: 5px;
+        .submit-btn-index:hover {
+            background: #00d2ff !important;
+            color: black !important;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.6);
         }
 
         #footer-placeholder { position: absolute; top: 400vh; width: 100%; z-index: 100; transform: translateY(-100%); }
@@ -358,7 +472,7 @@
             pointer-events: none;
         }
 
-        /* --- MOBILE MEDIA QUERY (Added to preserve CSS) --- */
+        /* --- MOBILE MEDIA QUERY --- */
         .hamburger { display: none; }
 
         @media (max-width: 768px) {
@@ -383,21 +497,30 @@
                 display: none;
                 flex-direction: column;
                 position: absolute;
-                top: 70px;
-                left: 0;
-                width: 100%;
+                top: 80px;
+                right: 20px;
                 background: rgba(0,0,0,0.95);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 15px;
                 padding: 20px;
-                border-bottom: 1px solid rgba(255,255,255,0.1);
-                align-items: center;
+                width: 200px;
             }
 
             .nav-links.active { display: flex; }
-            .nav-links > a, .activities-dropdown, .search-wrapper { margin: 10px 0; }
+            .nav-links > a, .activities-dropdown, .search-container { margin: 10px 0; margin-left: 0; }
             
             /* Make Activities dropdown click-based on mobile */
             .activities-dropdown { max-height: none; min-width: auto; }
             .activities-dropdown .sub-link { opacity: 1; color: white; font-size: 12px; margin-top: 5px; }
+
+            .auth-layer {
+                flex-direction: column !important;
+                gap: 30px !important;
+                justify-content: center !important;
+            }
+            .index-signup-right {
+                order: -1;
+            }
 
             .content-layer { padding: 0 5%; }
             .earth-detail-layer, .details-layer { 
@@ -408,50 +531,101 @@
             .info-box, .info-box.right {
                 transform: translateY(0);
                 text-align: center;
-                border: 1px solid rgba(255,255,255,0.1);
-                background: rgba(0,0,0,0.5);
-                max-width: 90%;
-                margin: 0 auto;
-                border-left: 1px solid rgba(255,255,255,0.2);
+                border-left: none;
+                border-right: none;
+                border-top: 1.5px solid #3b82f6;
+                border-bottom: 1.5px solid #3b82f6;
+                border-radius: 15px;
             }
-            .auth-card { width: 90%; padding: 30px 20px; }
-            .stats-grid { flex-wrap: wrap; gap: 20px; justify-content: center; }
+            .info-box.right {
+                border-top: 1.5px solid #8b5cf6;
+                border-bottom: 1.5px solid #8b5cf6;
+            }
+            .stats-grid { flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 20px; }
             .stat-item { flex: 0 0 40%; text-align: center; }
             .earth-3d { transform: scale(1.2); }
             body.stage-1 .earth-3d { transform: scale(1.3) translateY(10vh); }
         }
 
         #km-val, #mi-val {
-    font-size: 14px;       /* Makes the numbers larger */
-    font-weight: bold;      /* Makes them stand out */
-    color: #fff;
-                /* Bright white for contrast */
-    
-}
+            font-size: 14px;
+            font-weight: bold;
+            color: #00d2ff;
+            text-shadow: 0 0 10px rgba(0, 210, 255, 0.7);
+        }
     </style>
 </head>
 <body>
 
     <div class="stars-bg"></div>
+
+    <!-- Hyper-realistic 2D background planets for depth -->
+    <div class="bg-planets-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.15;">
+        <!-- Jupiter-like planet (Top Right) -->
+        <svg style="position: absolute; top: 12%; right: 6%; width: 150px; height: 150px;" viewBox="0 0 100 100">
+            <defs>
+                <radialGradient id="grad-jup" cx="30%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#f59e0b" />
+                    <stop offset="60%" stop-color="#b45309" />
+                    <stop offset="100%" stop-color="#451a03" />
+                </radialGradient>
+            </defs>
+            <circle cx="50" cy="50" r="45" fill="url(#grad-jup)" />
+            <path d="M 10 38 Q 50 48, 90 38" stroke="rgba(255,255,255,0.12)" stroke-width="4" fill="none" />
+            <path d="M 6 52 Q 50 64, 94 52" stroke="rgba(0,0,0,0.25)" stroke-width="6" fill="none" />
+            <path d="M 12 66 Q 50 74, 88 66" stroke="rgba(255,255,255,0.08)" stroke-width="3" fill="none" />
+        </svg>
+
+        <!-- Saturn-like planet with rings (Bottom Left) -->
+        <svg style="position: absolute; bottom: 15%; left: 8%; width: 220px; height: 160px;" viewBox="0 0 150 100">
+            <defs>
+                <radialGradient id="grad-sat" cx="35%" cy="35%" r="65%">
+                    <stop offset="0%" stop-color="#fed7aa" />
+                    <stop offset="70%" stop-color="#d97706" />
+                    <stop offset="100%" stop-color="#78350f" />
+                </radialGradient>
+            </defs>
+            <ellipse cx="75" cy="50" rx="60" ry="12" fill="none" stroke="rgba(217, 119, 6, 0.4)" stroke-width="6" transform="rotate(-15 75 50)" />
+            <circle cx="75" cy="50" r="32" fill="url(#grad-sat)" />
+            <path d="M 23 64 A 60 12 0 0 0 127 36" fill="none" stroke="rgba(217, 119, 6, 0.6)" stroke-width="6" transform="rotate(-15 75 50)" />
+        </svg>
+
+        <!-- Neptune-like planet (Mid Right) -->
+        <svg style="position: absolute; top: 48%; right: 14%; width: 100px; height: 100px;" viewBox="0 0 100 100">
+            <defs>
+                <radialGradient id="grad-nep" cx="30%" cy="30%" r="70%">
+                    <stop offset="0%" stop-color="#60a5fa" />
+                    <stop offset="70%" stop-color="#1d4ed8" />
+                    <stop offset="100%" stop-color="#1e1b4b" />
+                </radialGradient>
+            </defs>
+            <circle cx="50" cy="50" r="40" fill="url(#grad-nep)" />
+        </svg>
+    </div>
     
     <nav>
         <a href="index.html" class="logo">SOLARTASTIC</a>
         
-        <div class="nav-center">
-            <div class="nav-links" id="nav-links">
-                <a href="sessions.html">LIVE SESSIONS</a>
-                
-                <div class="activities-dropdown">
-                    <a href="activities.html" class="main-link">ACTIVITIES</a>
-                    <a href="game.html" class="sub-link">GAMES</a>
-                </div>
-
-                <a href="sign.html" class="active" id="auth-link">SIGN IN</a>
-            </div>
+        <div class="nav-links" id="nav-links">
+            <a href="sessions.html">LIVE SESSIONS</a>
             
-            <div class="search-wrapper">
-                <input type="text" id="search-input" class="search-input" placeholder="Search...">
-                <div id="search-results"></div>
+            <div class="activities-dropdown">
+                <a href="activities.html" class="main-link">ACTIVITIES</a>
+                <a href="game.html" class="sub-link">GAMES</a>
+            </div>
+
+            <a href="sign.html" class="active" id="auth-link">SIGN IN</a>
+            
+            <!-- Collapsible Search Bar -->
+            <div class="search-container" id="search-container-element">
+                <button class="search-btn" id="nav-search-btn" aria-label="Search">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </button>
+                <input type="text" class="search-input" id="nav-search-input" placeholder="Search Solartastic...">
+                <div class="search-results-dropdown" id="nav-search-results"></div>
             </div>
         </div>
 
@@ -508,26 +682,107 @@
     </div>
 
     <div class="content-layer auth-layer">
-        <div class="auth-card">
-            <h2 style="font-size: 24px; margin-bottom: 15px;">JOIN NOW!</h2>
-            <p style="font-family: sans-serif; opacity: 0.6; font-size: 13px; line-height: 1.6; letter-spacing: 1px;">
-                Create an account to save your progress across the stars.
-            </p>
-            <a href="alreadySign.html" class="signup-link">CREATE ACCOUNT</a>
+        <div class="index-signup-left">
+            <div class="auth-card">
+                <h2 style="font-size: 24px; margin-bottom: 15px;">CREATE ACCOUNT</h2>
+                <p style="font-family: sans-serif; opacity: 0.6; font-size: 13px; line-height: 1.6; letter-spacing: 1px; margin-bottom: 20px;">
+                    Create an account to save your progress across the stars.
+                </p>
+                <form id="indexSignUpForm" style="width: 100%; text-align: left;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; color: #aaa; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Username</label>
+                        <input type="text" id="index-username" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #151515; color: white; font-family: sans-serif; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; color: #aaa; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Email Address</label>
+                        <input type="email" id="index-email" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #151515; color: white; font-family: sans-serif; font-size: 14px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; color: #aaa; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;">Password</label>
+                        <input type="password" id="index-password" required style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #151515; color: white; font-family: sans-serif; font-size: 14px;">
+                    </div>
+                    <button type="submit" class="submit-btn-index" style="width: 100%; padding: 12px; border-radius: 8px; border: none; background: white; color: black; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; transition: 0.3s; font-family: 'Syncopate', sans-serif;">Create Account</button>
+                </form>
+                <p id="indexErrorMessage" style="color: #ff4757; font-size: 12px; margin-top: 15px; display: none; text-align: center; font-family: sans-serif;"></p>
+                <p style="text-align: center; margin-top: 20px; font-family: sans-serif; font-size: 12px; color: #aaa;">
+                    Already have an account? <a href="sign.html" style="color: white; text-decoration: none; font-weight: bold;">Sign in</a>
+                </p>
+            </div>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-item">
-                <span class="stat-number">5M+</span>
-                <span class="stat-label">Explorers</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number">100+</span>
-                <span class="stat-label">Educators</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-number">NASA</span>
-                <span class="stat-label">Data Sourced</span>
+        <div class="index-signup-right">
+            <h2 class="signup-title-right">Join thousands of other explorers!</h2>
+            <div class="lottie-person-container">
+                <div class="astronaut-placeholder">
+                    <!-- Premium Inline SVG Astronaut Silhouette -->
+                    <svg class="astronaut-svg" viewBox="0 0 100 120" width="130" height="150" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <filter id="glow-cyan" x="-20%" y="-20%" width="140%" height="140%">
+                          <feGaussianBlur stdDeviation="3" result="blur" />
+                          <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                          </feMerge>
+                        </filter>
+                        <filter id="glow-visor" x="-10%" y="-10%" width="120%" height="120%">
+                          <feGaussianBlur stdDeviation="2" result="blur" />
+                          <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                          </feMerge>
+                        </filter>
+                      </defs>
+                      
+                      <!-- Backpack -->
+                      <rect x="25" y="45" width="50" height="55" rx="10" fill="#cbd5e1" stroke="#1e293b" stroke-width="3" />
+                      <rect x="32" y="38" width="12" height="10" rx="3" fill="#64748b" stroke="#1e293b" stroke-width="2.5" />
+                      <rect x="56" y="38" width="12" height="10" rx="3" fill="#64748b" stroke="#1e293b" stroke-width="2.5" />
+                      
+                      <!-- Suit Body -->
+                      <rect x="30" y="50" width="40" height="45" rx="15" fill="#f1f5f9" stroke="#1e293b" stroke-width="3" />
+                      
+                      <!-- Suit Detail Lines -->
+                      <line x1="30" y1="62" x2="70" y2="62" stroke="#cbd5e1" stroke-width="3" />
+                      <line x1="30" y1="75" x2="70" y2="75" stroke="#cbd5e1" stroke-width="3" />
+                      
+                      <!-- Control Chest Panel -->
+                      <rect x="42" y="58" width="16" height="12" rx="3" fill="#0f172a" stroke="#1e293b" stroke-width="2" />
+                      <circle cx="47" cy="64" r="2" fill="#00d2ff" filter="url(#glow-cyan)" />
+                      <circle cx="53" cy="64" r="2" fill="#ef4444" />
+                      
+                      <!-- Helmet Connection Collar -->
+                      <ellipse cx="50" cy="48" rx="22" ry="4" fill="#64748b" stroke="#1e293b" stroke-width="2.5" />
+                      
+                      <!-- Helmet -->
+                      <circle cx="50" cy="34" r="18" fill="#f8fafc" stroke="#1e293b" stroke-width="3" />
+                      <!-- Visor -->
+                      <path d="M37 32 C37 22, 63 22, 63 32 C63 38, 37 38, 37 32 Z" fill="#0f172a" stroke="#00d2ff" stroke-width="2.5" filter="url(#glow-visor)" />
+                      <!-- Visor Reflection -->
+                      <path d="M41 28 Q 50 25, 59 28" stroke="rgba(255, 255, 255, 0.4)" stroke-width="1.5" fill="none" stroke-linecap="round" />
+                      
+                      <!-- Arms -->
+                      <!-- Left Arm -->
+                      <path d="M30 55 C18 58, 12 70, 22 75 C25 76, 28 72, 28 68" fill="#f1f5f9" stroke="#1e293b" stroke-width="3" stroke-linecap="round" />
+                      <!-- Left Glove -->
+                      <circle cx="20" cy="74" r="5" fill="#64748b" stroke="#1e293b" stroke-width="2" />
+                      
+                      <!-- Right Arm -->
+                      <path d="M70 55 C82 58, 88 70, 78 75 C75 76, 72 72, 72 68" fill="#f1f5f9" stroke="#1e293b" stroke-width="3" stroke-linecap="round" />
+                      <!-- Right Glove -->
+                      <circle cx="80" cy="74" r="5" fill="#64748b" stroke="#1e293b" stroke-width="2" />
+                      
+                      <!-- Legs -->
+                      <!-- Left Leg -->
+                      <rect x="34" y="90" width="12" height="18" rx="4" fill="#f1f5f9" stroke="#1e293b" stroke-width="3" />
+                      <!-- Left Boot -->
+                      <rect x="32" y="105" width="15" height="7" rx="3" fill="#475569" stroke="#1e293b" stroke-width="2.5" />
+                      
+                      <!-- Right Leg -->
+                      <rect x="54" y="90" width="12" height="18" rx="4" fill="#f1f5f9" stroke="#1e293b" stroke-width="3" />
+                      <!-- Right Boot -->
+                      <rect x="53" y="105" width="15" height="7" rx="3" fill="#475569" stroke="#1e293b" stroke-width="2.5" />
+                    </svg>
+                </div>
             </div>
         </div>
     </div>
@@ -564,46 +819,116 @@
             navLinks.classList.toggle('active');
         });
 
-        // --- SEARCH LOGIC ---
-        const searchInput = document.getElementById('search-input');
-        const searchResults = document.getElementById('search-results');
-        
-        // Define searchable items (navigation links)
-        const searchableItems = [
-            { title: "Home", url: "index.html", keywords: "home main landing" },
-            { title: "Live Sessions", url: "sessions.html", keywords: "live classes video" },
-            { title: "Earth", url: "Activities/P3.html", keywords: "Earth" },
-            { title: "Venus", url: "Activities/P2.html", keywords: "Venus" },
-            { title: "Mercury", url: "Activities/P1.html", keywords: "Mercury" },
-            { title: "Games", url: "game.html", keywords: "play fun interactive" },
-            { title: "Sign In", url: "sign.html", keywords: "login account" }
-        ];
+        // --- COLLAPSIBLE SEARCH BAR LOGIC ---
+        const searchBtn = document.getElementById('nav-search-btn');
+        const searchContainer = document.getElementById('search-container-element');
+        const searchInput = document.getElementById('nav-search-input');
+        const searchResultsDropdown = document.getElementById('nav-search-results');
 
-        searchInput.addEventListener('input', () => {
-            const query = searchInput.value.toLowerCase();
-            searchResults.innerHTML = '';
-            
-            if (query.length < 2) return;
-
-            const filtered = searchableItems.filter(item => 
-                item.title.toLowerCase().includes(query) || 
-                item.keywords.toLowerCase().includes(query)
-            );
-
-            filtered.forEach(item => {
-                const a = document.createElement('a');
-                a.href = item.url;
-                a.textContent = item.title;
-                searchResults.appendChild(a);
+        if (searchBtn && searchContainer && searchInput && searchResultsDropdown) {
+            // Toggle expand
+            searchBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!searchContainer.classList.contains('expanded')) {
+                    searchContainer.classList.add('expanded');
+                    searchInput.focus();
+                }
             });
-        });
 
-        // Close search results when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.search-wrapper')) {
-                searchResults.innerHTML = '';
-            }
-        });
+            // Close on click outside
+            document.addEventListener('click', (e) => {
+                if (!searchContainer.contains(e.target)) {
+                    searchContainer.classList.remove('expanded');
+                    searchResultsDropdown.style.display = 'none';
+                    searchInput.value = '';
+                }
+            });
+
+            // ESC to collapse
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    searchContainer.classList.remove('expanded');
+                    searchResultsDropdown.style.display = 'none';
+                    searchInput.value = '';
+                    searchInput.blur();
+                }
+            });
+
+            // Search searchable items list
+            const searchItems = [
+                { title: 'Home', url: 'index.html', keywords: 'home main landing space solartastic center' },
+                { title: 'Live Sessions', url: 'sessions.html', keywords: 'live classes video tutors reviews Alan Stern' },
+                { title: 'Activities', url: 'activities.html', keywords: 'activities assignments earth venus mercury space mission' },
+                { title: 'Mercury Module', url: 'Activities/P1.html', keywords: 'mercury first planet innermost assignment' },
+                { title: 'Venus Module', url: 'Activities/P2.html', keywords: 'venus second planet greenhouse assignment' },
+                { title: 'Earth Module', url: 'Activities/P3.html', keywords: 'earth third planet life assignment quiz' },
+                { title: 'Games', url: 'game.html', keywords: 'play fun interactive game space mission asteroids stars' },
+                { title: 'Educators', url: 'educators.html', keywords: 'educators screenshots creators help solartastic' },
+                { title: 'Sign In', url: 'sign.html', keywords: 'login account connect' },
+                { title: 'Sign Up', url: 'alreadySign.html', keywords: 'signup account create' }
+            ];
+
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.trim().toLowerCase();
+                searchResultsDropdown.innerHTML = '';
+
+                if (query.length < 2) {
+                    searchResultsDropdown.style.display = 'none';
+                    return;
+                }
+
+                const matches = searchItems.filter((item) => {
+                    return item.title.toLowerCase().indexOf(query) !== -1 || item.keywords.toLowerCase().indexOf(query) !== -1;
+                });
+
+                if (matches.length > 0) {
+                    matches.forEach((item) => {
+                        const a = document.createElement('a');
+                        a.href = item.url;
+                        a.className = 'search-item';
+                        a.textContent = item.title;
+                        searchResultsDropdown.appendChild(a);
+                    });
+                    searchResultsDropdown.style.display = 'block';
+                } else {
+                    const div = document.createElement('div');
+                    div.className = 'search-item no-results';
+                    div.textContent = 'No results found';
+                    searchResultsDropdown.appendChild(div);
+                    searchResultsDropdown.style.display = 'block';
+                }
+            });
+        }
+
+        // --- INDEX SIGN UP FIREBASE LOGIC ---
+        const indexForm = document.getElementById('indexSignUpForm');
+        const indexError = document.getElementById('indexErrorMessage');
+        if (indexForm) {
+            import("https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js").then((firestoreModule) => {
+                const { getFirestore, doc, setDoc } = firestoreModule;
+                const db = getFirestore(app);
+                
+                indexForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById('index-username').value;
+                    const email = document.getElementById('index-email').value;
+                    const password = document.getElementById('index-password').value;
+
+                    try {
+                        const { createUserWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js");
+                        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                        await setDoc(doc(db, "users", userCredential.user.uid), {
+                            username: username
+                        });
+                        window.location.href = 'index.html'; 
+                    } catch (error) {
+                        console.error("Index signup error:", error);
+                        indexError.textContent = error.code === 'auth/email-already-in-use' ? "Email already in use." : "Failed to create account.";
+                        indexError.style.display = 'block';
+                    }
+                });
+            });
+        }
 
         // --- DYNAMIC AUTH UI LOGIC ---
         const authLink = document.getElementById('auth-link');
