@@ -1,1 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solartastic - 3D Solar System Model</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700;900&display=swap" rel="stylesheet">
+    <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
+    <zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmm53hwox0025k1ttzfc6dtm7'></zapier-interfaces-chatbot-embed>
+
+    <script type="module" src="https://unpkg.com/@splinetool/viewer@1.12.61/build/spline-viewer.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body, html {
+            height: 100vh;
+            background: #000;
+            color: white;
+            font-family: 'Syncopate', sans-serif;
+            overflow: hidden;
+        }
+
+        #nav-placeholder {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .stars-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0;
+            background-image: 
+                radial-gradient(1.5px 1.5px at 25% 35%, #fff, transparent),
+                radial-gradient(1px 1px at 75% 65%, #fff, transparent);
+            background-size: 600px 600px;
+            pointer-events: none;
+        }
+
+        .model-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+        }
+
+        spline-viewer {
+            width: 100%;
+            height: 100%;
+            background: #000;
+        }
+
+        /* --- COLLAPSIBLE IMAGE GALLERY --- */
+        .gallery-sidebar {
+            position: fixed;
+            top: 110px;
+            right: 0;
+            height: calc(100vh - 180px);
+            width: 320px;
+            background: rgba(8, 8, 8, 0.85);
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: -15px 0 35px rgba(0,0,0,0.6);
+            border-radius: 20px 0 0 20px;
+        }
+
+        .gallery-sidebar.collapsed {
+            transform: translateX(320px);
+        }
+
+        .toggle-gallery-btn {
+            position: absolute;
+            top: 50%;
+            left: -40px;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 60px;
+            background: rgba(8, 8, 8, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            backdrop-filter: blur(20px);
+            outline: none;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+            transition: color 0.3s;
+        }
+
+        .toggle-gallery-btn:hover {
+            color: #00d2ff;
+        }
+
+        .gallery-title {
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            color: #00d2ff;
+            text-shadow: 0 0 10px rgba(0,210,255,0.4);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .gallery-scroll-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding-right: 5px;
+        }
+
+        /* Custom Scrollbar for Gallery */
+        .gallery-scroll-area::-webkit-scrollbar {
+            width: 4px;
+        }
+        .gallery-scroll-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .gallery-scroll-area::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .gallery-scroll-area::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 210, 255, 0.3);
+        }
+
+        .gallery-item {
+            width: 100%;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            border-color: #00d2ff;
+            transform: scale(1.02);
+            box-shadow: 0 5px 15px rgba(0,210,255,0.2);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+
+        .gallery-item:hover img {
+            opacity: 1;
+        }
+
+        .gallery-item-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 15px;
+            font-size: 9px;
+            letter-spacing: 1px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        #footer-placeholder {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars-bg"></div>
+
+    <div id="nav-placeholder"></div>
+
+    <!-- 3D Spline Solar System Viewer -->
+    <div class="model-container">
+        <spline-viewer url="https://prod.spline.design/ERNq44jxZstmtZiZ/scene.splinecode"></spline-viewer>
+    </div>
+
+    <!-- Collapsible Image Gallery -->
+    <div class="gallery-sidebar" id="gallerySidebar">
+        <button class="toggle-gallery-btn" id="toggleGalleryBtn">&gt;</button>
+        <h2 class="gallery-title">SYSTEM GALLERY</h2>
+        
+        <div class="gallery-scroll-area">
+            <div class="gallery-item">
+                <img src="https://science.nasa.gov/wp-content/uploads/2024/03/blue-marble-apollo-17-16x9-1.jpg?resize=768,432" alt="Earth">
+                <div class="gallery-item-label">EARTH ORBIT</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://science.nasa.gov/wp-content/uploads/2024/03/mars-full-globe-16x9-1.jpg?resize=768,432" alt="Mars">
+                <div class="gallery-item-label">MARS DISK</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://science.nasa.gov/wp-content/uploads/2024/03/jupiter-marble-pia22946-16x9-1.jpg?resize=768,432" alt="Jupiter">
+                <div class="gallery-item-label">JUPITER STORMS</div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://science.nasa.gov/wp-content/uploads/2023/05/saturn-farewell-pia21345-sse-banner-1920x640-1.jpg?resize=768,256" alt="Saturn">
+                <div class="gallery-item-label">SATURN RINGS</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer-placeholder"></div>
+
+    <script>
+        fetch('nav.html').then(res => res.text()).then(data => document.getElementById('nav-placeholder').innerHTML = data);
+        fetch('footer.html').then(res => res.text()).then(data => document.getElementById('footer-placeholder').innerHTML = data);
+
+        // Toggle Sidebar Collapse/Expand
+        const sidebar = document.getElementById('gallerySidebar');
+        const toggleBtn = document.getElementById('toggleGalleryBtn');
+
+        toggleBtn.addEventListener('click', () => {
+            const isCollapsed = sidebar.classList.toggle('collapsed');
+            toggleBtn.textContent = isCollapsed ? '<' : '>';
+        });
+    </script>
+</body>
 </html>

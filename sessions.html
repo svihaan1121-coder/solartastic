@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solartastic - Live Sessions</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700;900&display=swap" rel="stylesheet">
     <script async type='module' src='https://interfaces.zapier.com/assets/web-components/zapier-interfaces/zapier-interfaces.esm.js'></script>
     <zapier-interfaces-chatbot-embed is-popup='true' chatbot-id='cmm53hwox0025k1ttzfc6dtm7'></zapier-interfaces-chatbot-embed>
 
@@ -15,12 +16,11 @@
             background-color: #000;
             color: white;
             font-family: 'Syncopate', sans-serif;
-            /* Allow vertical scrolling but hide horizontal */
             overflow-x: hidden;
             overflow-y: auto;
         }
 
-        /* 2. NAVIGATION - Exactly as original */
+        /* 2. NAVIGATION */
         #nav-placeholder {
             position: absolute;
             top: 0;
@@ -29,22 +29,21 @@
             z-index: 100;
         }
 
-        /* 3. SVG RINGS - Exactly as original */
+        /* 3. SVG RINGS */
         .visual-container {
             position: absolute;
-            bottom: 0; /* Changed to 0 relative to the 100vh height */
+            bottom: 0;
             left: -400px;
             width: 1200px;
             height: 1200px;
             z-index: 5;
             pointer-events: none;
-            /* Ensures it stays within the first fold */
             transform: translateY(400px); 
         }
 
         .ring-path {
             fill: none;
-            stroke: rgba(58, 90, 120, 1);
+            stroke: rgba(58, 90, 120, 0.1); /* Reduced ring opacity to 0.1 */
             stroke-width: 1.5;
             stroke-dasharray: 4100;
             stroke-dashoffset: 4100;
@@ -66,7 +65,7 @@
             fill: white;
             font-family: 'Syncopate', sans-serif;
             font-size: 62px;
-            font-weight: 300;
+            font-weight: 900; /* Bold hero text like */
             letter-spacing: 8px;
             text-transform: uppercase;
             transform: rotate(15deg); 
@@ -78,10 +77,10 @@
 
         @keyframes fadeInText { to { opacity: 1; } }
 
-        /* 4. MAIN CONTENT - Exactly as original */
+        /* 4. MAIN CONTENT */
         .main-content {
             margin-top: 100px; 
-            position: absolute; /* Kept absolute so layout doesn't break */
+            position: absolute;
             top: 0;
             right: 0;
             z-index: 10;
@@ -114,69 +113,134 @@
             from { opacity: 0; transform: translateY(-30px); }
         }
 
-        /* 5. REVIEW SLIDESHOW BOX - Exactly as original */
-        .review-box {
+        /* 5. GUEST SPEAKER BOX */
+        .guest-speaker-card {
             width: 550px;
-            background: white;
-            border-radius: 40px;
-            padding: 40px;
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            color: #3a5a78;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 30px;
+            padding: 35px;
+            color: white;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(255,255,255,0.05);
+            backdrop-filter: blur(20px);
+            text-align: left;
             opacity: 0;
             animation: fadeIn 1s ease forwards;
-            animation-delay: 2s;
+            animation-delay: 1.8s;
+            position: relative;
         }
 
         @keyframes fadeIn { to { opacity: 1; } }
 
-        .review-avatar {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: #6a89a7;
-            flex-shrink: 0;
-            box-shadow: inset -10px -10px 25px rgba(0,0,0,0.2);
-            transition: background 0.8s ease;
-            /* Added text centering for initials */
+        .speaker-header {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 40px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            gap: 20px;
         }
 
-        .review-content { text-align: left; }
-        .review-name { font-weight: 800; font-size: 19px; margin-bottom: 8px; text-transform: uppercase; }
-        .review-text { font-family: sans-serif; font-size: 14px; opacity: 0.8; font-style: italic; line-height: 1.5; }
+        .speaker-info {
+            flex-grow: 1;
+        }
 
-        /* 6. LAYOUT FIX: SPACER AND CALENDAR */
+        .speaker-tag {
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: #00d2ff;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .speaker-name {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .speaker-title {
+            font-family: sans-serif;
+            font-size: 12px;
+            opacity: 0.6;
+            line-height: 1.4;
+            text-transform: uppercase;
+        }
+
+        .speaker-avatar-container {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 2.5px solid #00d2ff;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .speaker-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .speaker-desc {
+            font-family: sans-serif;
+            font-size: 14px;
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .speaker-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .speaker-date {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            opacity: 0.7;
+        }
+
+        .speaker-btn {
+            background: #00d2ff;
+            color: black;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            font-family: 'Syncopate', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+        }
+
+        .speaker-btn:hover {
+            background: white;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+        }
+
+        /* 6. FIRST FOLD CONFIG */
         .first-fold {
             position: relative;
             height: 100vh;
             width: 100%;
         }
 
-        .calendar-section {
-            background: black; 
-           padding-left: 30px;
-           padding-right: 30px;
-            position: relative;
-            z-index: 10;
-        }
-
-        /* 7. MEET THE TUTORS SECTION */
-        .tutors-section {
+        /* 7. EXPERIENCES SECTION */
+        .experiences-section {
             padding: 100px 5vw;
             background: black;
-            color: white;
             position: relative;
             z-index: 10;
+            width: 100%;
+            overflow: hidden;
         }
 
         .section-title {
@@ -187,100 +251,521 @@
             text-transform: uppercase;
         }
 
-        /* Tutor Card "Box" Styling */
-        .tutor-card {
+        .lines-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .experiences-grid {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 40px;
+            position: relative;
+            z-index: 2;
+            padding-bottom: 60px;
+        }
+
+        .exp-card {
+            width: 320px;
+            padding: 40px 30px;
+            border-radius: 30px;
+            border: 1px solid;
+            color: white;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: border-color 0.3s ease;
+        }
+
+        .exp-avatar-container {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 2px solid white;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+        }
+
+        .exp-avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .exp-name {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .exp-text {
+            font-family: sans-serif;
+            font-size: 13px;
+            opacity: 0.8;
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        .float-anim-1 { animation: float1 5s ease-in-out infinite; }
+        .float-anim-2 { animation: float2 6s ease-in-out infinite; }
+        .float-anim-3 { animation: float3 5.5s ease-in-out infinite; }
+
+        @keyframes float1 {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: translateY(60px); }
+            50% { transform: translateY(45px); }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: translateY(-30px); }
+            50% { transform: translateY(-45px); }
+        }
+
+        /* 8. CALENDAR SECTION */
+        .calendar-section {
+            padding: 100px 5vw;
+            background: black;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+        }
+
+        .calendar-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .event-card {
             display: flex;
             align-items: center;
-            gap: 50px;
-            margin-bottom: 60px;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
-            /* Added Box Styles */
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 40px;
-            border-radius: 30px;
-            background: rgba(255, 255, 255, 0.02);
-            /* Initial state for JS animation */
+            border-radius: 20px;
+            padding: 25px 35px;
+            transition: all 0.3s ease;
+            gap: 30px;
+            position: relative;
+        }
+
+        .event-card:hover {
+            border-color: rgba(0, 210, 255, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.05);
+        }
+
+        .event-date-badge {
+            background: linear-gradient(135deg, #00d2ff 0%, #0066cc 100%);
+            border-radius: 15px;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            color: black;
+            font-weight: 800;
+            box-shadow: 0 5px 15px rgba(0, 210, 255, 0.2);
+        }
+
+        .event-month {
+            font-size: 11px;
+            letter-spacing: 1.5px;
+        }
+
+        .event-day {
+            font-size: 26px;
+            line-height: 1;
+        }
+
+        .event-details {
+            flex-grow: 1;
+            text-align: left;
+        }
+
+        .event-title {
+            font-size: 18px;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .event-time {
+            font-size: 11px;
+            color: #00d2ff;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .event-desc {
+            font-family: sans-serif;
+            font-size: 13px;
+            opacity: 0.7;
+            line-height: 1.5;
+        }
+
+        .calendar-dropdown-container {
+            position: relative;
+        }
+
+        .calendar-add-btn {
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 12px 20px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            font-family: 'Syncopate', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-add-btn:hover {
+            background: white;
+            color: black;
+            border-color: white;
+        }
+
+        .calendar-dropdown-menu {
+            position: absolute;
+            top: 110%;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            width: 220px;
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        .calendar-dropdown-menu a {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 18px;
+            font-size: 11px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-family: sans-serif;
+        }
+
+        .calendar-dropdown-menu a:last-child {
+            border-bottom: none;
+        }
+
+        .calendar-dropdown-menu a:hover {
+            background: rgba(0, 210, 255, 0.1);
+            color: #00d2ff;
+        }
+
+        /* 9. MEET THE TUTORS SECTION */
+        .tutors-section {
+            position: relative;
+            padding: 100px 5vw;
+            background: black;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .tutors-container {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .scroll-tracer-container {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .scroll-tracer-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .tutors-wrapper-row {
+            display: flex;
+            flex-direction: column;
+            gap: 100px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tutor-card-container {
+            display: flex;
+            align-items: center;
+            width: 85%;
+            gap: 30px;
             opacity: 0;
+            transition: all 0.6s ease;
         }
 
-        /* Animation Keyframes */
+        .tutor-card-container.left-align {
+            align-self: flex-start;
+        }
+
+        .tutor-card-container.right-align {
+            align-self: flex-end;
+            justify-content: flex-end;
+        }
+
+        /* Animation classes */
+        .tutor-card-container.animate-left {
+            animation: fadeInLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .tutor-card-container.animate-right {
+            animation: fadeInRight 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
         @keyframes fadeInLeft {
-            from { opacity: 0; transform: translateX(-50px); }
+            from { opacity: 0; transform: translateX(-60px); }
             to { opacity: 1; transform: translateX(0); }
         }
+
         @keyframes fadeInRight {
-            from { opacity: 0; transform: translateX(50px); }
+            from { opacity: 0; transform: translateX(60px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* Classes to be added by JS on scroll */
-        .tutor-card.animate-left {
-            animation: fadeInLeft 1s ease forwards;
-        }
-        .tutor-card.animate-right {
-            animation: fadeInRight 1s ease forwards;
+        .tutor-card.new-style {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            flex: 1;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            max-width: 750px;
         }
 
-        /* Adjusting sides for odd/even */
-        .tutor-card:nth-of-type(even) {
-            flex-direction: row-reverse;
-            text-align: right;
+        .tutor-card.new-style:hover {
+            border-color: rgba(0, 210, 255, 0.4);
+            box-shadow: 0 0 30px rgba(0, 210, 255, 0.25);
+            background: rgba(255, 255, 255, 0.04);
         }
 
-        /* Tutor Image Container */
+        .tutor-card-container.left-align .tutor-card.new-style {
+            transform: translateX(30px);
+        }
+
+        .tutor-card-container.right-align .tutor-card.new-style {
+            transform: translateX(-30px);
+        }
+
         .tutor-image-circle {
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             border-radius: 50%;
             flex-shrink: 0;
             border: 3px solid rgba(255,255,255,0.2);
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            overflow: hidden; /* Ensures image fits circle */
+            overflow: hidden;
         }
         
         .tutor-image-circle img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Keeps aspect ratio */
+            object-fit: cover;
+        }
+
+        .tutor-content {
+            text-align: left;
         }
 
         .tutor-content h3 {
-            font-size: 24px;
-            margin-bottom: 15px;
+            font-size: 22px;
+            margin-bottom: 12px;
             letter-spacing: 2px;
             text-transform: uppercase;
         }
 
         .tutor-content p {
             font-family: sans-serif;
-            font-size: 15px;
-            line-height: 1.7;
+            font-size: 14px;
+            line-height: 1.6;
             opacity: 0.7;
-            margin-bottom: 20px;
         }
 
-        .tutor-contact {
-            color: white;
+        /* Side Actions Panel */
+        .tutor-actions-side {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            z-index: 10;
+        }
+
+        .action-item {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50px;
+            padding: 12px;
+            width: 46px;
+            height: 46px;
+            color: rgba(255, 255, 255, 0.7);
             text-decoration: none;
-            font-family: 'Syncopate', sans-serif;
-            font-size: 12px;
-            font-weight: 700;
-            border: 1px solid white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            transition: 0.3s;
-            display: inline-block;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        .tutor-contact:hover {
-            background: white;
-            color: black;
+        .icon-svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            color: #00d2ff;
         }
-        
+
+        .action-text {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-left: 15px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .action-item:hover {
+            width: 220px;
+            color: white;
+            background: rgba(0, 210, 255, 0.15);
+            border-color: rgba(0, 210, 255, 0.4);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+        }
+
+        .action-item:hover .action-text {
+            opacity: 1;
+        }
+
+        .tutor-actions-side.right-side {
+            transform: translateX(10px);
+        }
+
+        .tutor-actions-side.left-side {
+            transform: translateX(-10px);
+        }
 
         #footer-placeholder { position: relative; width: 100%; z-index: 100; }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding-right: 20px;
+                padding-left: 20px;
+                align-items: center;
+                text-align: center;
+            }
+            .hero-description {
+                text-align: center;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .guest-speaker-card {
+                width: 100%;
+                max-width: 500px;
+                padding: 25px;
+            }
+            .speaker-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .speaker-avatar-container {
+                order: -1;
+                margin-bottom: 15px;
+            }
+            .speaker-footer {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            .experiences-grid {
+                flex-direction: column;
+                align-items: center;
+                gap: 60px;
+            }
+            .exp-card {
+                transform: none !important;
+                animation: none !important;
+            }
+            .tutor-card-container {
+                flex-direction: column;
+                width: 100%;
+                gap: 20px;
+            }
+            .tutor-card.new-style {
+                flex-direction: column;
+                text-align: center;
+                padding: 25px;
+                transform: none !important;
+            }
+            .tutor-content {
+                text-align: center;
+            }
+            .tutor-actions-side {
+                flex-direction: row;
+                justify-content: center;
+                transform: none !important;
+            }
+            .action-item:hover {
+                width: 46px;
+            }
+            .action-text {
+                display: none;
+            }
+            .scroll-tracer-container {
+                display: none;
+            }
+            .event-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 25px;
+            }
+            .event-details {
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -310,108 +795,283 @@
                 or learn with your peers in group study sessions. The choice is yours!
             </p>
 
-            <div class="review-box" id="reviewBox">
-                <div class="review-avatar" id="revAvatar">EM</div>
-                <div class="review-content">
-                    <div class="review-name" id="revName">Emma Martinez</div>
-                    <p class="review-text" id="revText">"The one-on-one sessions completely transformed my understanding of planetary physics!"</p>
+            <div class="guest-speaker-card" id="speakerCard">
+                <div class="speaker-header">
+                    <div class="speaker-info">
+                        <span class="speaker-tag">SPECIAL EVENT</span>
+                        <h2 class="speaker-name">DR. ALAN STERN</h2>
+                        <p class="speaker-title">Principal Investigator, New Horizons Mission</p>
+                    </div>
+                    <div class="speaker-avatar-container">
+                        <img src="images/speaker_alan_stern.png" alt="Dr. Alan Stern" class="speaker-avatar">
+                    </div>
+                </div>
+                <p class="speaker-desc">"Exploring the Pluto System and the Kuiper Belt: A New Horizons Update." Join us live for an interactive discussion with the lead scientist behind NASA's historic mission.</p>
+                <div class="speaker-footer">
+                    <span class="speaker-date">JUNE 15, 2026 // 7:00 PM EST</span>
+                    <button class="speaker-btn" onclick="alert('The Zoom link will become active 15 minutes before the session starts! Check back then.')">GET LINK</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="calendar-section">
-        <div class= "cal" data-tockify-component="calendar" data-tockify-calendar="solartastic"></div>
+    <!-- experiences testimonials section -->
+    <div class="experiences-section">
+        <h2 class="section-title">EXPERIENCES</h2>
+        
+        <div class="lines-overlay">
+            <svg viewBox="0 0 1200 600" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;">
+                <line x1="220" y1="0" x2="220" y2="600" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" />
+                <line x1="600" y1="0" x2="600" y2="600" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" />
+                <line x1="980" y1="0" x2="980" y2="600" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1.5" />
+            </svg>
+        </div>
+
+        <div class="experiences-grid">
+            <div class="exp-card float-anim-1" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(168, 85, 247, 0.12) 100%); border-color: rgba(99, 102, 241, 0.35);">
+                <div class="exp-avatar-container">
+                    <img src="images/emma_martinez.png" alt="Emma Martinez" class="exp-avatar">
+                </div>
+                <h3 class="exp-name">Emma Martinez</h3>
+                <p class="exp-text">"The one-on-one sessions completely transformed my understanding of planetary physics! Dr. Michael Zheng explained complex stellar lifecycle diagrams so simply."</p>
+            </div>
+
+            <div class="exp-card float-anim-2" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.12) 0%, rgba(239, 68, 68, 0.12) 100%); border-color: rgba(236, 72, 153, 0.35); transform: translateY(60px);">
+                <div class="exp-avatar-container">
+                    <img src="images/james_lee.png" alt="James Lee" class="exp-avatar">
+                </div>
+                <h3 class="exp-name">James Lee</h3>
+                <p class="exp-text">"Learning alongside peers made complex orbital mechanics calculations click. I loved the interactive activities and games on the website!"</p>
+            </div>
+
+            <div class="exp-card float-anim-3" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.12) 0%, rgba(59, 130, 246, 0.12) 100%); border-color: rgba(6, 182, 212, 0.35); transform: translateY(-30px);">
+                <div class="exp-avatar-container">
+                    <img src="images/sofia_patel.png" alt="Sofia Patel" class="exp-avatar">
+                </div>
+                <h3 class="exp-name">Sofia Patel</h3>
+                <p class="exp-text">"The tutoring sessions are incredible, but the 3D models of planets make studying astronomy feel like a video game. Pure fun!"</p>
+            </div>
+        </div>
     </div>
 
+    <!-- custom schedule calendar section -->
+    <div class="calendar-section">
+        <h2 class="section-title">UPCOMING SCHEDULE</h2>
+        <div class="calendar-grid">
+            <div class="event-card">
+                <div class="event-date-badge">
+                    <span class="event-month">JUN</span>
+                    <span class="event-day">12</span>
+                </div>
+                <div class="event-details">
+                    <h3 class="event-title">Stellar Evolution Basics</h3>
+                    <p class="event-time">June 12, 2026 // 4:00 PM - 5:00 PM EST</p>
+                    <p class="event-desc">Witness the life cycle of stars from nebulae to supernovae. Perfect for beginners.</p>
+                </div>
+                <div class="calendar-dropdown-container">
+                    <button class="calendar-add-btn" onclick="toggleCalDropdown(event, 'dropdown-1')">ADD TO CALENDAR ▼</button>
+                    <div class="calendar-dropdown-menu" id="dropdown-1">
+                        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Stellar+Evolution+Basics+-+Solartastic&dates=20260612T200000Z/20260612T210000Z&details=Learn+about+nebulae,+stars,+and+supernovae+live+with+Solartastic.&location=https://solartastic.com" target="_blank">Google Calendar</a>
+                        <a href="data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20260612T200000Z%0ADTEND:20260612T210000Z%0ASUMMARY:Stellar+Evolution+Basics+-+Solartastic%0ADESCRIPTION:Learn+about+nebulae,+stars,+and+supernovae+live+with+Solartastic.%0ALOCATION:Online%0AEND:VEVENT%0AEND:VCALENDAR" download="stellar_evolution.ics">Apple / Outlook (.ics)</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-date-badge">
+                    <span class="event-month">JUN</span>
+                    <span class="event-day">19</span>
+                </div>
+                <div class="event-details">
+                    <h3 class="event-title">Astrophotography Live</h3>
+                    <p class="event-time">June 19, 2026 // 8:00 PM - 9:00 PM EST</p>
+                    <p class="event-desc">Learn to capture the night sky using standard mobile devices and telescopes.</p>
+                </div>
+                <div class="calendar-dropdown-container">
+                    <button class="calendar-add-btn" onclick="toggleCalDropdown(event, 'dropdown-2')">ADD TO CALENDAR ▼</button>
+                    <div class="calendar-dropdown-menu" id="dropdown-2">
+                        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Astrophotography+Live+-+Solartastic&dates=20260619T000000Z/20260620T010000Z&details=Learn+to+capture+the+night+sky+using+mobile+devices+and+telescopes+live+with+Solartastic.&location=https://solartastic.com" target="_blank">Google Calendar</a>
+                        <a href="data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20260619T000000Z%0ADTEND:20260620T010000Z%0ASUMMARY:Astrophotography+Live+-+Solartastic%0ADESCRIPTION:Learn+to+capture+the+night+sky+using+mobile+devices+and+telescopes+live+with+Solartastic.%0ALOCATION:Online%0AEND:VEVENT%0AEND:VCALENDAR" download="astrophotography.ics">Apple / Outlook (.ics)</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <div class="event-date-badge">
+                    <span class="event-month">JUN</span>
+                    <span class="event-day">26</span>
+                </div>
+                <div class="event-details">
+                    <h3 class="event-title">Mars Rover Operations</h3>
+                    <p class="event-time">June 26, 2026 // 3:00 PM - 4:00 PM EST</p>
+                    <p class="event-desc">Step into the control room and learn how NASA guides rovers on Mars.</p>
+                </div>
+                <div class="calendar-dropdown-container">
+                    <button class="calendar-add-btn" onclick="toggleCalDropdown(event, 'dropdown-3')">ADD TO CALENDAR ▼</button>
+                    <div class="calendar-dropdown-menu" id="dropdown-3">
+                        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Mars+Rover+Operations+-+Solartastic&dates=20260626T190000Z/20260626T200000Z&details=Learn+how+NASA+navigates+and+operates+rovers+live+with+Solartastic.&location=https://solartastic.com" target="_blank">Google Calendar</a>
+                        <a href="data:text/calendar;charset=utf8,BEGIN:VCALENDAR%0AVERSION:2.0%0ABEGIN:VEVENT%0ADTSTART:20260626T190000Z%0ADTEND:20260626T200000Z%0ASUMMARY:Mars+Rover+Operations+-+Solartastic%0ADESCRIPTION:Learn+how+NASA+navigates+and+operates+rovers+live+with+Solartastic.%0ALOCATION:Online%0AEND:VEVENT%0AEND:VCALENDAR" download="mars_rover.ics">Apple / Outlook (.ics)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- tutors section -->
     <div class="tutors-section">
         <h2 class="section-title">MEET THE TUTORS</h2>
         
-        <div class="tutor-card">
-            <div class="tutor-image-circle">
-                <img src="https://www.appam.org/assets/1/6/mainfckeditordimension/can_chen.jpg" alt="Dr. Michael Zheng">
+        <div class="tutors-container">
+            <!-- Scroll SVG Path Tracer -->
+            <div class="scroll-tracer-container">
+                <svg viewBox="0 0 100 1000" fill="none" class="scroll-tracer-svg" preserveAspectRatio="none">
+                    <path d="M 50,0 Q 20,250 50,500 T 50,1000" stroke="url(#tracer-grad)" stroke-width="3" stroke-dasharray="1000" stroke-dashoffset="1000" id="tutor-scroll-path" />
+                    <defs>
+                        <linearGradient id="tracer-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#00d2ff" />
+                            <stop offset="100%" stop-color="#8b5cf6" />
+                        </linearGradient>
+                    </defs>
+                </svg>
             </div>
-            <div class="tutor-content">
-                <h3>DR. MICHAEL ZHENG</h3>
-                <p>Specializing in Stellar Evolution and Galaxy Formation. Dr. Zheng brings over 15 years of research experience to help simplify complex astrophysical concepts for students of all levels. Contact for private sessions.</p>
-                <a href="mailto:zheng@solartastic.com" class="tutor-contact">CONTACT DR. ZHENG</a>
-            </div>
-        </div>
 
-        <div class="tutor-card">
-            <div class="tutor-image-circle">
-                <img src="https://img.freepik.com/free-photo/confident-pretty-business-woman-with-arms-crossed_1262-2992.jpg" alt="Prof. Eleana Weber">
-            </div>
-            <div class="tutor-content">
-                <h3>PROF. ELEANA WEBER</h3>
-                <p>Expert in Planetary Science and Orbital Mechanics. Prof. Weber focuses on interactive group learning and practical application of physics. Reach out to join her next group workshop.</p>
-                <a href="mailto:weber@solartastic.com" class="tutor-contact">CONTACT PROF. WEBER</a>
+            <div class="tutors-wrapper-row">
+                <!-- Tutor 1 (Left Align) -->
+                <div class="tutor-card-container left-align">
+                    <div class="tutor-card new-style">
+                        <div class="tutor-image-circle">
+                            <img src="https://www.appam.org/assets/1/6/mainfckeditordimension/can_chen.jpg" alt="Dr. Michael Zheng">
+                        </div>
+                        <div class="tutor-content">
+                            <h3>DR. MICHAEL ZHENG</h3>
+                            <p>Specializing in Stellar Evolution and Galaxy Formation. Dr. Zheng brings over 15 years of research experience to help simplify complex astrophysical concepts for students of all levels. Contact for private sessions.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Vertical Icon Actions (Right side blank space) -->
+                    <div class="tutor-actions-side right-side">
+                        <a href="mailto:zheng@solartastic.com" class="action-item">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/></svg>
+                            <span class="action-text">Email Tutor</span>
+                        </a>
+                        <a href="https://calendly.com" target="_blank" class="action-item">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" fill="currentColor"/></svg>
+                            <span class="action-text">Schedule Meet</span>
+                        </a>
+                        <a href="#" onclick="alert('Live chat is currently busy. Try emailing Dr. Zheng!')" class="action-item">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" fill="currentColor"/></svg>
+                            <span class="action-text">Text Live Chat</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tutor 2 (Right Align) -->
+                <div class="tutor-card-container right-align">
+                    <!-- Vertical Icon Actions (Left side blank space) -->
+                    <div class="tutor-actions-side left-side">
+                        <a href="mailto:weber@solartastic.com" class="action-item">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/></svg>
+                            <span class="action-text">Email Tutor</span>
+                        </a>
+                        <a href="https://calendly.com" target="_blank" class="action-item">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z" fill="currentColor"/></svg>
+                            <span class="action-text">Schedule Meet</span>
+                        </a>
+                        <a href="#" onclick="alert('Live chat is currently busy. Try emailing Prof. Weber!')" class="action-item">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" fill="currentColor"/></svg>
+                            <span class="action-text">Text Live Chat</span>
+                        </a>
+                    </div>
+
+                    <div class="tutor-card new-style">
+                        <div class="tutor-image-circle">
+                            <img src="https://img.freepik.com/free-photo/confident-pretty-business-woman-with-arms-crossed_1262-2992.jpg" alt="Prof. Eleana Weber">
+                        </div>
+                        <div class="tutor-content">
+                            <h3>PROF. ELEANA WEBER</h3>
+                            <p>Expert in Planetary Science and Orbital Mechanics. Prof. Weber focuses on interactive group learning and practical application of physics. Reach out to join her next group workshop.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <div id="footer-placeholder"></div>
 
-    <script data-cfasync="false" data-tockify-script="embed" src="https://public.tockify.com/browser/embed.js"></script>
     <script>
         fetch('nav.html').then(res => res.text()).then(data => document.getElementById('nav-placeholder').innerHTML = data);
         fetch('footer.html').then(res => res.text()).then(data => document.getElementById('footer-placeholder').innerHTML = data);
 
-        const reviews = [
-            { name: "Emma Martinez", initials: "EM", text: '"The one-on-one sessions completely transformed my understanding!"', color: "#6a89a7" },
-            { name: "James Lee", initials: "JL", text: '"Learning alongside peers made complex imaging click."', color: "#5a3a78" },
-            { name: "Sofia Patel", initials: "SP", text: '"The flexibility of these study groups is amazing!"', color: "#a78b6a" }
-        ];
-
-        let currentRev = 0;
-        function rotateReview() {
-            const box = document.getElementById('reviewBox');
-            if(!box) return;
-            box.style.opacity = '0';
-            setTimeout(() => {
-                currentRev = (currentRev + 1) % reviews.length;
-                document.getElementById('revName').innerText = reviews[currentRev].name;
-                document.getElementById('revText').innerText = reviews[currentRev].text;
-                document.getElementById('revAvatar').innerText = reviews[currentRev].initials;
-                document.getElementById('revAvatar').style.backgroundColor = reviews[currentRev].color;
-                box.style.opacity = '1';
-            }, 600);
+        // --- CALENDAR DROPDOWN LOGIC ---
+        function toggleCalDropdown(event, id) {
+            event.stopPropagation();
+            const activeMenu = document.getElementById(id);
+            const allMenus = document.querySelectorAll('.calendar-dropdown-menu');
+            
+            allMenus.forEach(menu => {
+                if (menu !== activeMenu) {
+                    menu.style.display = 'none';
+                }
+            });
+            
+            if (activeMenu.style.display === 'flex') {
+                activeMenu.style.display = 'none';
+            } else {
+                activeMenu.style.display = 'flex';
+            }
         }
-        setInterval(rotateReview, 5000);
-        // Initialize first review
-        document.getElementById('revAvatar').innerText = reviews[0].initials;
-        document.getElementById('revAvatar').style.backgroundColor = reviews[0].color;
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.calendar-dropdown-menu').forEach(menu => {
+                menu.style.display = 'none';
+            });
+        });
 
         // --- INTERSECTION OBSERVER FOR SCROLL ANIMATIONS ---
         const observerOptions = {
-            root: null, // use the viewport
-            threshold: 0.15 // trigger when 15% of the card is visible
+            root: null,
+            threshold: 0.15
         };
 
         const observerCallback = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const card = entry.target;
-                    
-                    // Add animation class based on whether it is odd or even
-                    if (card.matches(':nth-of-type(odd)')) {
-                        card.classList.add('animate-left');
+                    const container = entry.target;
+                    if (container.classList.contains('left-align')) {
+                        container.classList.add('animate-left');
                     } else {
-                        card.classList.add('animate-right');
+                        container.classList.add('animate-right');
                     }
-                    
-                    // Stop observing after animating once
-                    observer.unobserve(card);
+                    observer.unobserve(container);
                 }
             });
         };
 
         const tutorObserver = new IntersectionObserver(observerCallback, observerOptions);
-
-        // Target the cards
-        document.querySelectorAll('.tutor-card').forEach(card => {
-            tutorObserver.observe(card);
+        document.querySelectorAll('.tutor-card-container').forEach(container => {
+            tutorObserver.observe(container);
         });
+
+        // --- SCROLL ACTIVE SVG PATH TRACER ---
+        const scrollPath = document.getElementById('tutor-scroll-path');
+        if (scrollPath) {
+            const pathLength = scrollPath.getTotalLength();
+            scrollPath.style.strokeDasharray = pathLength;
+            scrollPath.style.strokeDashoffset = pathLength;
+
+            window.addEventListener('scroll', () => {
+                const container = document.querySelector('.tutors-container');
+                if (!container) return;
+                const rect = container.getBoundingClientRect();
+                const viewHeight = window.innerHeight;
+                
+                const totalDistance = rect.height + viewHeight;
+                const currentProgress = Math.max(0, Math.min(1, (viewHeight - rect.top) / totalDistance));
+                
+                scrollPath.style.strokeDashoffset = pathLength * (1 - currentProgress);
+            });
+        }
     </script>
 </body>
 </html>

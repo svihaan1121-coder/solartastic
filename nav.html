@@ -4,9 +4,11 @@
     <div class="nav-links">
         <a href="sessions.html">LIVE SESSIONS</a>
         
-        <div class="activities-dropdown">
+        <div class="activities-dropdown-wrapper">
             <a href="activities.html" class="main-link">ACTIVITIES</a>
-            <a href="game.html" class="sub-link">GAMES</a>
+            <div class="dropdown-menu">
+                <a href="game.html" class="sub-link">GAMES</a>
+            </div>
         </div>
 
         <a href="sign.html" class="active" id="auth-link">SIGN IN</a>
@@ -169,54 +171,68 @@ html, body {
     background: rgba(255,255,255,0.1); 
 }
 
-/* THE EXPANDING BOX (ACTIVITIES) */
-.activities-dropdown {
+/* THE ABSOLUTE DROPDOWN (ACTIVITIES) */
+.activities-dropdown-wrapper {
+    position: relative;
     margin-left: 30px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 25px; 
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    max-height: 37px; 
-    overflow: hidden;
-    min-width: 160px;
+    display: inline-block;
 }
 
-.activities-dropdown:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid white;
-    max-height: 80px;
-}
-
-.activities-dropdown .main-link {
+.activities-dropdown-wrapper .main-link {
     font-family: 'Syncopate', sans-serif;
-    padding: 10px 22px;
-    font-size: 15px;
-    text-decoration: none;
+    font-size: 15px; 
+    text-decoration: none; 
     color: white;
-    width: 100%;
-    text-align: center;
+    padding: 10px 22px; 
+    border-radius: 50px; 
+    transition: 0.3s ease;
     line-height: 1;
+    border: 1px solid transparent;
     display: block;
 }
 
-.activities-dropdown .sub-link {
+.activities-dropdown-wrapper:hover .main-link {
+    border: 1px solid white;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.activities-dropdown-wrapper .dropdown-menu {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 50%;
+    transform: translateX(-50%) translateY(-10px);
+    background: rgba(0, 0, 0, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 15px;
+    padding: 8px 0;
+    min-width: 160px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(0, 150, 255, 0.15);
+}
+
+.activities-dropdown-wrapper:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.activities-dropdown-wrapper .dropdown-menu a.sub-link {
     font-family: 'Syncopate', sans-serif;
-    padding-bottom: 12px;
     font-size: 10px;
     text-decoration: none;
     color: rgba(255, 255, 255, 0.6);
-    width: 100%;
+    padding: 10px 20px;
+    display: block;
     text-align: center;
-    transition: color 0.3s, opacity 0.3s;
-    opacity: 0;
+    transition: color 0.3s, background 0.3s;
 }
 
-.activities-dropdown:hover .sub-link {
-    opacity: 1;
+.activities-dropdown-wrapper .dropdown-menu a.sub-link:hover {
     color: white;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 /* COLLAPSIBLE SEARCH BAR STYLING */
